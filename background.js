@@ -32,14 +32,18 @@ chrome.runtime.onInstalled.addListener(function () {
 //       actions.
 function getConditions () {
   // todo: get conditions from permanent data structure
-  // todo: update conditions when add hotkeys for new website
   let conditions = [new chrome.declarativeContent.PageStateMatcher({
                       pageUrl: { hostEquals: 'tieba.baidu.com' }
-                    }) , new chrome.declarativeContent.PageStateMatcher({
+                    }), new chrome.declarativeContent.PageStateMatcher({
                       pageUrl: { hostEquals: 'www.bilibili.com' }
                     })];
   return conditions;
 }
+
+// todo: update conditions when add hotkeys for new website, try
+//       chrome.runtime.onMessage.addListener(function(){
+//         chrome.declarativeContent.onPageChanged.addRules(rules);
+//       });
 
 chrome.contextMenus.onClicked.addListener(function(info, tab) {
   console.log("info " + info.menuItemId + " was clicked");
