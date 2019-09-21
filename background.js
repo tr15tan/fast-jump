@@ -1,12 +1,11 @@
 chrome.runtime.onInstalled.addListener(function () {
 
-  // todo: add more domains to match the conditions
   chrome.declarativeContent.onPageChanged.removeRules(undefined, function () {
     chrome.declarativeContent.onPageChanged.addRules([{
-      conditions: [new chrome.declarativeContent.PageStateMatcher({
-        pageUrl: { hostEquals: 'tieba.baidu.com' },
-      })
-      ],
+    //  conditions: [new chrome.declarativeContent.PageStateMatcher({
+    //    pageUrl: { hostEquals: 'tieba.baidu.com' }
+    //  })],
+      conditions: getConditions(),
       actions: [new chrome.declarativeContent.ShowPageAction()]
     }]);
   });
@@ -26,6 +25,17 @@ chrome.runtime.onInstalled.addListener(function () {
     console.log("'" + context + "' item:" + id);
   }
 });
+
+// todo: get conditions from permanent data structure
+// todo: update conditions when add hotkeys for new website
+function getConditions () {
+  let conditions = [new chrome.declarativeContent.PageStateMatcher({
+                      pageUrl: { hostEquals: 'tieba.baidu.com' }
+                    }) , new chrome.declarativeContent.PageStateMatcher({
+                      pageUrl: { hostEquals: 'www.bilibili.com' }
+                    })];
+  return conditions;
+}
 
 chrome.contextMenus.onClicked.addListener(function(info, tab) {
   console.log("info " + info.menuItemId + " was clicked");
