@@ -26,9 +26,13 @@ chrome.runtime.onInstalled.addListener(function () {
   }
 });
 
-// todo: get conditions from permanent data structure
-// todo: update conditions when add hotkeys for new website
+// Note: The simplest possible rule consists of one or more conditions and one
+//       or more actions, if any of the conditions is fulfilled, all actions
+//       are executed. Each condition is sufficient to trigger all specified
+//       actions.
 function getConditions () {
+  // todo: get conditions from permanent data structure
+  // todo: update conditions when add hotkeys for new website
   let conditions = [new chrome.declarativeContent.PageStateMatcher({
                       pageUrl: { hostEquals: 'tieba.baidu.com' }
                     }) , new chrome.declarativeContent.PageStateMatcher({
