@@ -1,5 +1,9 @@
 console.log("loaded contentscript");
+
+let hotkeyMap = new Map();
+
 document.addEventListener('contextmenu', function (event) {
+  console.log("=====================================================");
   console.log("detected contextmenu event");
 
   let object = event.target;
@@ -19,14 +23,13 @@ document.addEventListener('contextmenu', function (event) {
   current.id = object.id;
 
   // save parent element info: localName, classList, id
-  current.parentElement = {};
-  current.parentElement.localName = parentElement.localName;
+  current.parentElementLocalName = parentElement.localName;
   let parentElementClassList = "";
   for (let parentElementClassName of parentElement.classList) {
     parentElementClassList += "." + parentElementClassName;
   }
-  current.parentElement.classList = parentElementClassList;
-  current.parentElement.id = parentElement.id;
+  current.parentElementClassList = parentElementClassList;
+  current.parentElementId = parentElement.id;
 
   chrome.storage.sync.set({selectedObject: current}, function(){
     console.log("save current select object info for options page");
@@ -34,22 +37,23 @@ document.addEventListener('contextmenu', function (event) {
 
 });
 
-//chrome.runtime.onMessage.addListener(
-//  function(msg, sender, sendResponse) {
-//    if (msg.content) {
-//      console.log("Got message from options page: " + msg.content);
-//    }
-//});
-
 chrome.storage.onChanged.addListener(function(changes, namespace) {
+  console.log("=====================================================");
   for (let key in changes) {
-    var storageChange = changes[key];
+    let storageChange = changes[key];
     console.log('Storage key "%s" in namespace "%s" changed. ' +
                 'Old value was "%s", new value is "%s".',
                 key,
                 namespace,
                 storageChange.oldValue,
                 storageChange.newValue);
+
+    // do not react to the temporary change
+    if (key == 'selectedObject'){
+      console.log("ignore the temporary change");
+      continue;
+    }
+
     if (storageChange.oldValue != undefined) {
       console.log("oldValue = ");
       console.log(storageChange.oldValue);
@@ -59,22 +63,12 @@ chrome.storage.onChanged.addListener(function(changes, namespace) {
       console.log(storageChange.newValue);
     }
 
-    // do not react to the temporary change
-    if (key == 'selectedObject'){
-      continue;
-    }
-
     if (storageChange.oldValue === undefined) {
       console.log("add new hotkey");
       let change = storageChange.newValue;
 
       if (change.domain === document.domain) {
-        let targetElement = locateElement(change);
-        if (targetElement != undefined) {
-          // todo: storage new hotkey listener
-          let hotkeyhandler = createHotkeyHandler(targetElement, change);
-          document.addEventListener('keydown', hotkeyhandler);
-        }
+        startListen(change);
       } else {
         console.log("the change is not about this domain, ignore");
       }
@@ -94,11 +88,8 @@ chrome.storage.onChanged.addListener(function(changes, namespace) {
       // expired onkeydown listener
       let change = storageChange.newValue;
       if (change.domain === document.domain) {
-        let targetElement = locateElement(change);
-        if (targetElement != undefined) {
-          let hotkeyhandler = createHotkeyHandler(targetElement, change);
-          document.addEventListener('keydown', hotkeyhandler);
-        }
+        stopListen(storageChange.oldValue);
+        startListen(change);
       } else {
         console.log("the change is not about this domain, ignore");
       }
@@ -106,9 +97,51 @@ chrome.storage.onChanged.addListener(function(changes, namespace) {
   }
 });
 
+chrome.runtime.onMessage.addListener(
+  function(msg, sender, sendResponse) {
+    if (msg.action == 'prepare to listen') {
+      console.log("Got hotkeyInfos from background: ");
+      console.log(msg.objects);
+      msg.objects.forEach(startListen);
+    }
+});
+
+function startListen(hotkeyInfo) {
+  let targetElement = locateElement(hotkeyInfo);
+  if (targetElement != undefined) {
+    let hotkeyhandler = createHotkeyHandler(targetElement, hotkeyInfo);
+    document.addEventListener('keydown', hotkeyhandler);
+    hotkeyMap.set(hotkeyInfo, hotkeyhandler);
+    console.log("add hotkey listener! name = " + hotkeyInfo.name +
+                " hotkey = " + hotkeyInfo.hotkeySet);
+  }
+}
+
+function stopListen(hotkeyInfo) {
+  let uselessListener;
+  for (let key of hotkeyMap.keys()) {
+    let match = true;
+    for (let property in key) {
+      if (hotkeyInfo[property] != key[property]) {
+        match = false;
+        break;
+      }
+    }
+    if (match) {
+      console.log("find former saved listener");
+      uselessListener = hotkeyMap.get(key);
+    }
+  }
+  if (uselessListener != undefined) {
+    document.removeEventListener('keydown', uselessListener);
+    console.log("removed useless listener!");
+  } else {
+    console.log("can't find saved listener!");
+  }
+}
+
 function locateElement(hotkeyInfo) {
   let target;
-  console.log("target in locateElement func = " + target);
   // css-selector of target element
   let selector = "";
   if (hotkeyInfo.localName != "") {
@@ -117,7 +150,7 @@ function locateElement(hotkeyInfo) {
   if (hotkeyInfo.classList != "") {
     selector += hotkeyInfo.classList;
   }
-  if (hotkeyInfo.href != "") {
+  if (hotkeyInfo.href != "" && hotkeyInfo.href != null) {
     selector += "[href=\'" + hotkeyInfo.href + "\']";
   }
   if (hotkeyInfo.id != "") {
@@ -127,14 +160,14 @@ function locateElement(hotkeyInfo) {
 
   // css-selector of target parent element
   let parentElemSelector = "";
-  if (hotkeyInfo.parentElement.localName != "") {
-    parentElemSelector += hotkeyInfo.parentElement.localName;
+  if (hotkeyInfo.parentElementLocalName != "") {
+    parentElemSelector += hotkeyInfo.parentElementLocalName;
   }
-  if (hotkeyInfo.parentElement.classList != "") {
-    parentElemSelector += hotkeyInfo.parentElement.classList;
+  if (hotkeyInfo.parentElementClassList != "") {
+    parentElemSelector += hotkeyInfo.parentElementClassList;
   }
-  if (hotkeyInfo.parentElement.id != "") {
-    parentElemSelector += "#" + hotkeyInfo.parentElement.id;
+  if (hotkeyInfo.parentElementId != "") {
+    parentElemSelector += "#" + hotkeyInfo.parentElementId;
   }
   console.log("parentElemSelector = " + parentElemSelector);
 
@@ -161,7 +194,7 @@ function locateElement(hotkeyInfo) {
 
 function createHotkeyHandler(targetElement, hotkeyInfo) {
   return function(event){
-    let hotkeySet = hotkeyInfo.hotkeySet.split(',');
+    let hotkeySet = hotkeyInfo.hotkeySet.split('-');
 
     //for (let hotkey of hotkeySet)
     // assume we only support single-key hotkey

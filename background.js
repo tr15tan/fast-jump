@@ -1,3 +1,39 @@
+// domainMap is like this:
+// domainMap = (['www.bilibili.com': [hotkeyInfo1, hotkeyInfo2, ...]],
+//              ['tieba.baidu.com': [hotkeyInfo5, hotkeyInfo6, ...]], ...)
+let domainMap = new Map();
+
+chrome.storage.sync.get(null, function(result) {
+  console.log('get all hotkey info :');
+  console.log(result);
+  for (let key in result) {
+    console.log("key = " + key + " value = " + JSON.stringify(result[key]));
+  }
+  for (let hotkeyInfo of Object.values(result)) {
+    console.log(hotkeyInfo);
+    if (domainMap.has(hotkeyInfo.domain)) {
+      let sameOriginArray = domainMap.get(hotkeyInfo.domain);
+      sameOriginArray.push(hotkeyInfo);
+      domainMap.set(hotkeyInfo.domain, sameOriginArray);
+    } else {
+      console.log("create new domain key");
+      domainMap.set(hotkeyInfo.domain, [hotkeyInfo,]);  // save as array
+    }
+  }
+});
+
+chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
+  console.log("onUpdated tab.url : " + tab.url);
+  for (let domain of domainMap.keys()) {
+    if (tab.url.includes(domain)) {
+      console.log(domainMap.values());
+      // send the corresponding hotkeyInfo array to this tab
+      chrome.tabs.sendMessage(
+        tabId, {action: 'prepare to listen', objects:domainMap.get(domain)});
+    }
+  }
+});
+
 chrome.runtime.onInstalled.addListener(function () {
 
   chrome.declarativeContent.onPageChanged.removeRules(undefined, function () {
@@ -49,7 +85,6 @@ chrome.contextMenus.onClicked.addListener(function (info, tab) {
   console.log("info " + info.menuItemId + " was clicked");
   console.log("info: " + JSON.stringify(info));
   console.log("tab: " + JSON.stringify(tab));
-
 
   if (chrome.runtime.openOptionsPage) {
     chrome.runtime.openOptionsPage();
