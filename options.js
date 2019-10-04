@@ -46,6 +46,8 @@ saveButton.onclick = function (event) {
       //  messageTabId, {content:"send from options page"});
       console.log("saved hotkey!");
       chrome.storage.sync.remove(['selectedObject'], function () {
+        operationName.value = "";
+        hotkeySet.value = "";
         console.log("remove selectedObject cz we don't need it!");
       });
     });
