@@ -102,9 +102,10 @@ chrome.runtime.onMessage.addListener(
       console.log("Got hotkeyInfos from background: ");
       console.log(msg.objects);
       stopAll();
-      msg.objects.forEach((item, index, array) => {
-        targetHotkeyMap.set(item.name, item);
-        startListen(item);
+      // Object.entries(obj) returns an array of key/value pairs for an object
+      targetHotkeyMap = new Map(Object.entries(msg.objects));
+      targetHotkeyMap.forEach((value, key, map) => {
+        startListen(value);
       });
     }
 });
