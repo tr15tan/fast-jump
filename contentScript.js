@@ -1,7 +1,5 @@
 console.log("loaded contentscript");
 
-let hotkeyMap = new Map();
-
 document.addEventListener('contextmenu', function (event) {
   console.log("=====================================================");
   console.log("detected contextmenu event");
@@ -32,7 +30,7 @@ document.addEventListener('contextmenu', function (event) {
   current.parentElementId = parentElement.id;
 
   chrome.storage.sync.set({selectedObject: current}, function(){
-    console.log("save current select object info for options page");
+    //console.log("save current select object info for options page");
   });
 
 });
@@ -76,19 +74,18 @@ chrome.storage.onChanged.addListener(function(changes, namespace) {
       console.log("remove hotkey");
       let change = storageChange.oldValue;
       if (change.domain === document.domain) {
-        // todo: remove hotkey listener
+        targetHotkeyMap.delete(change.name);
+        stopListen(storageChange.oldValue);
       } else {
         console.log("the change is not about this domain, ignore");
       }
     } else {
       console.log("modify hotkey");
-      // todo: remove the expired onkeydown listener
-
-      // let's just focus on the newvalue cz we couldn't locate&remove the
-      // expired onkeydown listener
       let change = storageChange.newValue;
       if (change.domain === document.domain) {
+        targetHotkeyMap.delete(change.name);
         stopListen(storageChange.oldValue);
+        targetHotkeyMap.set(change.name, change);
         startListen(change);
       } else {
         console.log("the change is not about this domain, ignore");
@@ -97,46 +94,58 @@ chrome.storage.onChanged.addListener(function(changes, namespace) {
   }
 });
 
+let targetHotkeyMap = new Map();
+
 chrome.runtime.onMessage.addListener(
   function(msg, sender, sendResponse) {
     if (msg.action == 'prepare to listen') {
       console.log("Got hotkeyInfos from background: ");
       console.log(msg.objects);
-      msg.objects.forEach(startListen);
+      stopAll();
+      msg.objects.forEach((item, index, array) => {
+        targetHotkeyMap.set(item.name, item);
+        startListen(item);
+      });
     }
 });
 
+let listenedHotkeyMap = new Map();
+
 function startListen(hotkeyInfo) {
+  if (listenedHotkeyMap.has(hotkeyInfo.name)) return;
   let targetElement = locateElement(hotkeyInfo);
   if (targetElement != undefined) {
     let hotkeyhandler = createHotkeyHandler(targetElement, hotkeyInfo);
     document.addEventListener('keydown', hotkeyhandler);
-    hotkeyMap.set(hotkeyInfo, hotkeyhandler);
+    listenedHotkeyMap.set(hotkeyInfo.name, {object:hotkeyInfo, handler:hotkeyhandler});
     console.log("add hotkey listener! name = " + hotkeyInfo.name +
                 " hotkey = " + hotkeyInfo.hotkeySet);
+    console.log(listenedHotkeyMap);
   }
 }
 
 function stopListen(hotkeyInfo) {
-  let uselessListener;
-  for (let key of hotkeyMap.keys()) {
-    let match = true;
-    for (let property in key) {
-      if (hotkeyInfo[property] != key[property]) {
-        match = false;
-        break;
-      }
-    }
-    if (match) {
-      console.log("find former saved listener");
-      uselessListener = hotkeyMap.get(key);
-    }
+  let uselessHandler;
+  if (listenedHotkeyMap.has(hotkeyInfo.name)) {
+    console.log("find former saved listener");
+    uselessHandler = listenedHotkeyMap.get(hotkeyInfo.name).handler;
   }
-  if (uselessListener != undefined) {
-    document.removeEventListener('keydown', uselessListener);
+  if (uselessHandler != undefined) {
+    document.removeEventListener('keydown', uselessHandler);
     console.log("removed useless listener!");
+    listenedHotkeyMap.delete(hotkeyInfo.name);
+    console.log(listenedHotkeyMap);
   } else {
     console.log("can't find saved listener!");
+  }
+}
+
+function stopAll() {
+  if (listenedHotkeyMap.size != 0) {
+    listenedHotkeyMap.forEach((value, key, map) => {
+      stopListen(value.object);
+    })
+    console.log("cleared all listener!");
   }
 }
 
@@ -156,7 +165,7 @@ function locateElement(hotkeyInfo) {
   if (hotkeyInfo.id != "") {
     selector += "#" + hotkeyInfo.id;
   }
-  console.log("selector = " + selector);
+  //console.log("selector = " + selector);
 
   // css-selector of target parent element
   let parentElemSelector = "";
@@ -169,11 +178,11 @@ function locateElement(hotkeyInfo) {
   if (hotkeyInfo.parentElementId != "") {
     parentElemSelector += "#" + hotkeyInfo.parentElementId;
   }
-  console.log("parentElemSelector = " + parentElemSelector);
+  //console.log("parentElemSelector = " + parentElemSelector);
 
   // check whether the found element is our wanted
   let nodeList = document.querySelectorAll(selector);
-  if (nodeList) {
+  if (nodeList.length != 0) {
     for (let node of nodeList) {
       let parentElem = node.parentElement;
       if (parentElem != undefined && parentElem.matches(parentElemSelector)) {
@@ -184,11 +193,9 @@ function locateElement(hotkeyInfo) {
       }
     }
   }
-
   if (target === undefined){
     console.log("can't find target element!");
   }
-
   return target;
 }
 
@@ -206,6 +213,39 @@ function createHotkeyHandler(targetElement, hotkeyInfo) {
   };
 }
 
-document.addEventListener('keydown', function(event) {
-  console.log("onkeydown code : " + event.code);
-});
+//document.addEventListener('keydown', function(event) {
+//  console.log("onkeydown code : " + event.code);
+//});
+
+const mutationCallback = (mutationsList) => {
+  console.log("detected change!");
+  targetHotkeyMap.forEach((value, key, map) => {
+    startListen(value);
+  });
+  if (listenedHotkeyMap.size != 0) {
+    let locatedElements = [];
+    for (let value of listenedHotkeyMap.values()) {
+      let element = locateElement(value.object);
+      if (element != undefined) {
+        locatedElements.push({object: value.object, element: element});
+      }
+    }
+    for(let mutation of mutationsList) {
+      for (let element of locatedElements) {
+        if (mutation.target.contains(element.element)) {
+          console.log("this change is about hotkey element! Restart listen!");
+          stopListen(element.object);
+          startListen(element.object);
+        }
+      }
+    }
+  }
+};
+
+let observer = new MutationObserver(mutationCallback);
+
+document.addEventListener('DOMContentLoaded', startObserver());
+
+function startObserver() {
+  observer.observe(document.body, {childList: true, subtree: true});
+}

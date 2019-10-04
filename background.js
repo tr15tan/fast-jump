@@ -6,11 +6,11 @@ let domainMap = new Map();
 chrome.storage.sync.get(null, function(result) {
   console.log('get all hotkey info :');
   console.log(result);
-  for (let key in result) {
-    console.log("key = " + key + " value = " + JSON.stringify(result[key]));
-  }
+  //for (let key in result) {
+  //  console.log("key = " + key + " value = " + JSON.stringify(result[key]));
+  //}
   for (let hotkeyInfo of Object.values(result)) {
-    console.log(hotkeyInfo);
+    //console.log(hotkeyInfo);
     if (domainMap.has(hotkeyInfo.domain)) {
       let sameOriginArray = domainMap.get(hotkeyInfo.domain);
       sameOriginArray.push(hotkeyInfo);
@@ -26,10 +26,11 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
   console.log("onUpdated tab.url : " + tab.url);
   for (let domain of domainMap.keys()) {
     if (tab.url.includes(domain)) {
-      console.log(domainMap.values());
+      console.log(domainMap.get(domain));
       // send the corresponding hotkeyInfo array to this tab
       chrome.tabs.sendMessage(
         tabId, {action: 'prepare to listen', objects:domainMap.get(domain)});
+      console.log("send hotkey");
     }
   }
 });
@@ -70,6 +71,8 @@ function getConditions() {
   // todo: get conditions from permanent data structure
   let conditions = [new chrome.declarativeContent.PageStateMatcher({
     pageUrl: { hostEquals: 'tieba.baidu.com' }
+  }),new chrome.declarativeContent.PageStateMatcher({
+    pageUrl: { hostEquals: 't.bilibili.com' }
   }), new chrome.declarativeContent.PageStateMatcher({
     pageUrl: { hostEquals: 'www.bilibili.com' }
   })];
