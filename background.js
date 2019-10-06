@@ -5,7 +5,7 @@ let domainMap = new Map();
 
 chrome.storage.sync.get(null, function(result) {
   console.log('get all hotkey info :');
-  console.log(result);
+  //console.log(result);
   // we ues for...in cz we need key to filter the selectedObject
   for (let key in result) {
     if (key == 'selectedObject'){
@@ -83,16 +83,6 @@ chrome.storage.onChanged.addListener(function(changes, namespace) {
 
 chrome.runtime.onInstalled.addListener(function () {
 
-  chrome.declarativeContent.onPageChanged.removeRules(undefined, function () {
-    chrome.declarativeContent.onPageChanged.addRules([{
-      //  conditions: [new chrome.declarativeContent.PageStateMatcher({
-      //    pageUrl: { hostEquals: 'tieba.baidu.com' }
-      //  })],
-      conditions: getConditions(),
-      actions: [new chrome.declarativeContent.ShowPageAction()]
-    }]);
-  });
-
   //let contexts = ["all", "page", "frame", "selection", "link", "editable",
   //  "image", "video", "audio", "launcher", "browser_action", "page_action"];
   // todo: maybe support other type later
@@ -108,27 +98,6 @@ chrome.runtime.onInstalled.addListener(function () {
   //  console.log("'" + context + "' item:" + id);
   //}
 });
-
-// Note: The simplest possible rule consists of one or more conditions and one
-//       or more actions, if any of the conditions is fulfilled, all actions
-//       are executed. Each condition is sufficient to trigger all specified
-//       actions.
-function getConditions() {
-  // todo: get conditions from permanent data structure
-  let conditions = [new chrome.declarativeContent.PageStateMatcher({
-    pageUrl: { hostEquals: 'tieba.baidu.com' }
-  }),new chrome.declarativeContent.PageStateMatcher({
-    pageUrl: { hostEquals: 't.bilibili.com' }
-  }), new chrome.declarativeContent.PageStateMatcher({
-    pageUrl: { hostEquals: 'www.bilibili.com' }
-  })];
-  return conditions;
-}
-
-// todo: update conditions when add hotkeys for new website, try
-//       chrome.runtime.onMessage.addListener(function(){
-//         chrome.declarativeContent.onPageChanged.addRules(rules);
-//       });
 
 chrome.contextMenus.onClicked.addListener(function (info, tab) {
   console.log("info " + info.menuItemId + " was clicked");
