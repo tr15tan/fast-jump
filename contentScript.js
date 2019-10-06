@@ -206,12 +206,41 @@ function createHotkeyHandler(targetElement, hotkeyInfo) {
 
     //for (let hotkey of hotkeySet)
     // assume we only support single-key hotkey
-    if(event.code == hotkeySet[0]) {
-      console.log("click the element through script!");
-      // todo: perform the action with user defined
-      targetElement.click();
+    if(event.code != hotkeySet[0]) return;
+
+    if (hotkeyInfo.validWhenVisible) {
+      if (!isVisible(targetElement)) return;
     }
+
+    switch (hotkeyInfo.operation) {
+      case 'focus':
+        console.log("focus the element through script!");
+        targetElement.focus();
+        break;
+      case 'click':
+        console.log("click the element through script!");
+        targetElement.click();
+        break;
+      default:
+        break;
+    }
+
   };
+}
+
+function isVisible(elem) {
+
+  let coords = elem.getBoundingClientRect();
+
+  let windowHeight = document.documentElement.clientHeight;
+
+  // top elem edge is visible?
+  let topVisible = coords.top > 0 && coords.top < windowHeight;
+
+  // bottom elem edge is visible?
+  let bottomVisible = coords.bottom < windowHeight && coords.bottom > 0;
+
+  return topVisible || bottomVisible;
 }
 
 //document.addEventListener('keydown', function(event) {

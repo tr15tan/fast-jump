@@ -14,6 +14,10 @@ hotkeySet.onkeydown = function (event) {
   this.value += text + "-";
 }
 
+let validWhenVisible = document.getElementById('valid_when_visible');
+
+let operation = document.getElementById('operation');
+
 let saveButton = document.getElementById('button_save');
 saveButton.onclick = function (event) {
   chrome.storage.sync.get(['selectedObject'], function (result) {
@@ -32,13 +36,9 @@ saveButton.onclick = function (event) {
     }
     hotkeyInfo['name'] = operationName.value;
     hotkeyInfo['hotkeySet'] = hotkeySet.value;
-    console.log("name = " + hotkeyInfo['name'] +
-                "\nhotkeySet = " + hotkeyInfo['hotkeySet'] +
-                "\ndomain = " + hotkeyInfo['domain'] +
-                "\nclassList = " + hotkeyInfo['classList'] +
-                "\nlocalName = " + hotkeyInfo['localName'] +
-                "\nhref = " + hotkeyInfo['href'] +
-                "\nid = " + hotkeyInfo['id']);
+    hotkeyInfo['validWhenVisible'] = validWhenVisible.checked;
+    hotkeyInfo['operation'] = operation.value;
+    console.log(hotkeyInfo);
     chrome.storage.sync.set({
       [hotkeyInfo.domain + "~" + hotkeyInfo.name]: hotkeyInfo,
     }, function (result) {
@@ -48,6 +48,8 @@ saveButton.onclick = function (event) {
       chrome.storage.sync.remove(['selectedObject'], function () {
         operationName.value = "";
         hotkeySet.value = "";
+        validWhenVisible.checked = true;
+        operation.options[0].selected = true;
         console.log("remove selectedObject cz we don't need it!");
       });
     });
@@ -58,6 +60,8 @@ let cancelButton = document.getElementById('button_cancel');
 cancelButton.onclick = function (event) {
   operationName.value = "";
   hotkeySet.value = "";
+  validWhenVisible.checked = true;
+  operation.options[0].selected = true;
 }
 
 // save the tab.id from background.js if want to send message to target page

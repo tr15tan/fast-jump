@@ -7,8 +7,16 @@
 
 <body>
   <div id="new_hotkey_item">
-    <input type="text" id="operation_name" placeholder="give this operation a name">
+    <input type="text" id="operation_name" autofocus
+        placeholder="give this operation a name">
     <input type="text" id="hotkey_set" placeholder="press keys here">
+    <input type="checkbox" id="valid_when_visible"
+        name="valid_condition" checked>
+    <label for="valid_condition">valid when visible</label>
+    <select id="operation">
+      <option value="click" selected>click(default)</option>
+      <option value="focus">focus</option>
+    </select>
     <button id="button_save">save</button>
     <button id="button_cancel">cancel</button>
   </div>
