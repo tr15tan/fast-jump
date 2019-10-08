@@ -1,11 +1,14 @@
 // domainMap is like this:
 // domainMap = (['www.bilibili.com': map([name1, hotkeyInfo1], [name2, hotkeyInfo2], ...)],
 //              ['tieba.baidu.com': map([name5, hotkeyInfo5], [name6, hotkeyInfo6], ...)], ...)
-let domainMap = new Map();
+
+// chrome.extension.getBackgroundPage().domainMap is undefined when declear the
+// variable with `let`
+var domainMap = new Map();
 
 chrome.storage.sync.get(null, function(result) {
   console.log('get all hotkey info :');
-  //console.log(result);
+  console.log(result);
   // we ues for...in cz we need key to filter the selectedObject
   for (let key in result) {
     if (key == 'selectedObject'){
@@ -51,7 +54,7 @@ chrome.storage.onChanged.addListener(function(changes, namespace) {
     let storageChange = changes[key];
 
     if (storageChange.oldValue === undefined) {
-      console.log("add new hotkey");
+      console.log("add new hotkey " + key);
       let change = storageChange.newValue;
       if (domainMap.has(change.domain)) {
         let sameOriginMap = domainMap.get(change.domain);
@@ -64,13 +67,18 @@ chrome.storage.onChanged.addListener(function(changes, namespace) {
         domainMap.set(change.domain, map);  // save as map
       }
     } else if (storageChange.newValue === undefined) {
-      console.log("remove hotkey");
+      console.log("remove hotkey " + key);
       let change = storageChange.oldValue;
       let sameOriginMap = domainMap.get(change.domain);
       sameOriginMap.delete(change.name);
-      domainMap.set(change.domain, sameOriginMap);
+      if (sameOriginMap.size === 0) {
+        domainMap.delete(change.domain);
+        console.log("there is no hotkey for " + change.domain + " anymore");
+      } else {
+        domainMap.set(change.domain, sameOriginMap);
+      }
     } else {
-      console.log("modify hotkey");
+      console.log("modify hotkey " + key);
       let change = storageChange.newValue;
       let sameOriginMap = domainMap.get(change.domain);
       sameOriginMap.set(change.name, change);
