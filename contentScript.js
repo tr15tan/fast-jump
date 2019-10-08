@@ -279,3 +279,9 @@ document.addEventListener('DOMContentLoaded', startObserver());
 function startObserver() {
   observer.observe(document.body, {childList: true, subtree: true});
 }
+
+window.addEventListener("unload", function() {
+  chrome.storage.sync.remove(['selectedObject'], function () {
+    console.log("remove selectedObject before closing this tab");
+  })
+});
