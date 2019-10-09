@@ -5,30 +5,47 @@
 //  console.log("key = " + key + " value = " + JSON.stringify(result[key]));
 //}
 
-let newHotkeyItem = document.getElementById('new_hotkey_item');
-let operationName = newHotkeyItem.querySelector('.operation_name');
-let hotkeySet = newHotkeyItem.querySelector('.hotkey_set');
+//let tabId;
+//
+//chrome.tabs.onActivated.addListener((activeInfo) => {
+//  //console.log("tabs.onActivated, tabId = " + activeInfo.tabId);
+//  if (activeInfo.tabId === tabId) {
+//    console.log("focus on this tab, refresh");
+//    displayAddHotkey();
+//  }
+//})
+//
+//chrome.tabs.getCurrent((tab) => {
+//  //console.log("current tabId = " + tab.id);
+//  tabId = tab.id;
+//})
+
+// save the selected element from background.js
+chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+  if (request.action === 'save this') {
+    console.log("Got message from background : ");
+    console.log(request.object);
+    objectInfo = request.object;
+    displayAddHotkey();
+  }
+});
+
+let addHotkeyItem = document.getElementById('add_hotkey_item');
+let operationName = addHotkeyItem.querySelector('.operation_name');
+let hotkeySet = addHotkeyItem.querySelector('.hotkey_set');
 hotkeySet.onkeydown = function (event) {
   event.preventDefault(); // prevent display the input key after event code
   let text = event.code;
   this.value += text + "-";
 };
-let validWhenVisible = newHotkeyItem.querySelector('.valid_when_visible');
-let operation = newHotkeyItem.querySelector('.operation');
-let saveButton = newHotkeyItem.querySelector('.save');
-let clearButton = newHotkeyItem.querySelector('.clear');
-let warning = newHotkeyItem.querySelector('.warning');
+let validWhenVisible = addHotkeyItem.querySelector('.valid_when_visible');
+let operation = addHotkeyItem.querySelector('.operation');
+let saveButton = addHotkeyItem.querySelector('.save');
+let clearButton = addHotkeyItem.querySelector('.clear');
+let warning = addHotkeyItem.querySelector('.warning');
+// global variable for add new hotkey
 let objectInfo;
 
-// hide new hotkey form while opening options page without contextMenu
-chrome.storage.sync.get(['selectedObject'], function (result) {
-  if (result.selectedObject === undefined) {
-    console.log("selectedObject is undefined, hidden");
-    newHotkeyItem.hidden = true;
-  } else {
-    objectInfo = result.selectedObject;
-  }
-});
 saveButton.onclick = () => {
   if (operationName.value.trim() == "") {
     console.log("the operation name can not be empty, ignore save action!");
@@ -52,17 +69,12 @@ saveButton.onclick = () => {
   chrome.storage.sync.set({
     [objectInfo.domain + "~" + objectInfo.name]: objectInfo,
   }, function (result) {
-    //chrome.tabs.sendMessage(
-    //  messageTabId, {content:"send from options page"});
     console.log("saved hotkey!");
-    chrome.storage.sync.remove(['selectedObject'], function () {
-      operationName.value = "";
-      hotkeySet.value = "";
-      validWhenVisible.checked = true;
-      operation.options[0].selected = true;
-      warning.hidden = true;
-      console.log("remove selectedObject cz we don't need it!");
-    });
+    operationName.value = "";
+    hotkeySet.value = "";
+    validWhenVisible.checked = true;
+    operation.options[0].selected = true;
+    warning.hidden = true;
   });
 };
 
@@ -72,6 +84,15 @@ clearButton.onclick = () => {
   validWhenVisible.checked = true;
   operation.options[0].selected = true;
 };
+
+function displayAddHotkey() {
+  if (objectInfo === undefined) {
+    // hide new hotkey form while opening options page without contextMenu
+    addHotkeyItem.hidden = true;
+  } else {
+    addHotkeyItem.hidden = false;
+  }
+}
 
 let background = chrome.extension.getBackgroundPage();
 console.log(background.domainMap);
@@ -85,6 +106,7 @@ function displayHotkeys() {
   });
 }
 
+displayAddHotkey();
 displayHotkeys();
 
 function createCard(domainName) {
@@ -165,29 +187,20 @@ function createCardItem(card, hotkeyInfo) {
   };
   cardItemDiv.querySelector('.delete').onclick = () => {
     let result = confirm("Do you really want to delete this hotkey?");
-    if(result) {
+    if (result) {
       chrome.storage.sync.remove([hotkeyInfo.domain + "~" + hotkeyInfo.name],
-          function () {
-        console.log("delete hotkey " + hotkeyInfo.domain + "~" + hotkeyInfo.name);
-        cardItemDiv.remove();
-        if (cardItems.childElementCount === 0)  {
-          let event = new CustomEvent("delete-hotkey-item", {
-            bubbles: true,
-            detail: 'clearAllHotkeys'
-          });
-          cardItems.dispatchEvent(event);
-        }
-      });
+        function () {
+          console.log("delete hotkey " + hotkeyInfo.domain + "~" + hotkeyInfo.name);
+          cardItemDiv.remove();
+          if (cardItems.childElementCount === 0) {
+            let event = new CustomEvent("delete-hotkey-item", {
+              bubbles: true,
+              detail: 'clearAllHotkeys'
+            });
+            cardItems.dispatchEvent(event);
+          }
+        });
     }
   };
   cardItems.append(cardItemDiv);
 }
-
-
-// save the tab.id from background.js if want to send message to target page
-chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
-  if (msg.tabId) {
-    console.log("Got message(tab.id) : " + msg.tabId);
-    messageTabId = msg.tabId;
-  }
-});

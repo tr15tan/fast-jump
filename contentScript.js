@@ -29,9 +29,8 @@ document.addEventListener('contextmenu', function (event) {
   current.parentElementClassList = parentElementClassList;
   current.parentElementId = parentElement.id;
 
-  chrome.storage.sync.set({selectedObject: current}, function(){
-    //console.log("save current select object info for options page");
-  });
+  chrome.runtime.sendMessage({action: "ready to save",
+      object: current});
 
 });
 
@@ -46,11 +45,6 @@ chrome.storage.onChanged.addListener(function(changes, namespace) {
                 storageChange.oldValue,
                 storageChange.newValue);
 
-    // do not react to the temporary change
-    if (key == 'selectedObject'){
-      console.log("ignore the temporary change");
-      continue;
-    }
 
     if (storageChange.oldValue != undefined) {
       console.log("oldValue = ");
@@ -279,9 +273,3 @@ document.addEventListener('DOMContentLoaded', startObserver());
 function startObserver() {
   observer.observe(document.body, {childList: true, subtree: true});
 }
-
-window.addEventListener("unload", function() {
-  chrome.storage.sync.remove(['selectedObject'], function () {
-    console.log("remove selectedObject before closing this tab");
-  })
-});

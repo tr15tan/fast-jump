@@ -9,11 +9,8 @@ var domainMap = new Map();
 chrome.storage.sync.get(null, function(result) {
   console.log('get all hotkey info :');
   console.log(result);
-  // we ues for...in cz we need key to filter the selectedObject
+  // we ues for...in cz we need key for filter
   for (let key in result) {
-    if (key == 'selectedObject'){
-      continue;
-    }
     let hotkeyInfo = result[key];
     if (domainMap.has(hotkeyInfo.domain)) {
       let sameOriginMap = domainMap.get(hotkeyInfo.domain);
@@ -46,10 +43,6 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
 
 chrome.storage.onChanged.addListener(function(changes, namespace) {
   for (let key in changes) {
-    if (key == 'selectedObject'){
-      console.log("ignore the temporary change");
-      continue;
-    }
 
     let storageChange = changes[key];
 
@@ -86,7 +79,6 @@ chrome.storage.onChanged.addListener(function(changes, namespace) {
     }
     console.log(domainMap);
   }
-  //setRules();
 });
 
 chrome.runtime.onInstalled.addListener(function () {
@@ -107,6 +99,16 @@ chrome.runtime.onInstalled.addListener(function () {
   //}
 });
 
+// save message temporary before send to options page from contentscript
+let selectedElem;
+
+chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+  if (request.action === "ready to save") {
+    console.log("got selectedElem from contentscript");
+    selectedElem = request.object;
+  }
+});
+
 chrome.contextMenus.onClicked.addListener(function (info, tab) {
   console.log("info " + info.menuItemId + " was clicked");
   console.log("info: " + JSON.stringify(info));
@@ -118,8 +120,11 @@ chrome.contextMenus.onClicked.addListener(function (info, tab) {
     window.open(chrome.runtime.getURL('options.html'));
   }
 
-  //setTimeout(() => {
-  //  chrome.runtime.sendMessage({'tabId': tab.id});
-  //  console.log("send current selected object tab.id : " + tab.id);
-  //}, 200);
+  setTimeout(() => {
+    if (selectedElem != undefined) {
+      //console.log("send current selected object to options page");
+      chrome.runtime.sendMessage({action: "save this", object: selectedElem});
+      selectedElem = undefined;
+    }
+  }, 100);
 });
