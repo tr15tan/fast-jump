@@ -209,7 +209,12 @@ function createHotkeyHandler(targetElement, hotkeyInfo) {
     switch (hotkeyInfo.operation) {
       case 'focus':
         console.log("focus the element through script!");
-        targetElement.focus();
+        if (targetElement == document.activeElement) {
+          console.log("already focused! Ignore focus operation");
+        } else {
+          event.preventDefault(); //prevent display the input key in textarea
+          targetElement.focus();
+        }
         break;
       case 'click':
         console.log("click the element through script!");
