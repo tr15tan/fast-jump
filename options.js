@@ -49,7 +49,12 @@ let objectInfo;
 saveButton.onclick = () => {
   if (operationName.value.trim() == "") {
     console.log("the operation name can not be empty, ignore save action!");
-    warning.textContent = "the operation name can not be empty";
+    warning.textContent = "the operation name can not be empty!";
+    return;
+  }
+  if (operationName.value.trim().includes('\'')) {
+    console.log("the operation name invalid, ignore save action!");
+    warning.textContent = "the operation name can not include '\''!";
     return;
   }
   if (hotkeySet.value.trim() == "") {
@@ -75,6 +80,9 @@ saveButton.onclick = () => {
     validWhenVisible.checked = true;
     operation.options[0].selected = true;
     warning.hidden = true;
+    displayAddedHotkey(objectInfo);
+    objectInfo = undefined;
+    displayAddHotkey();
   });
 };
 
@@ -106,13 +114,25 @@ function displayHotkeys() {
   });
 }
 
+function displayAddedHotkey(hotkeyInfo) {
+  let createdCard = createCard(hotkeyInfo.domain);
+  createCardItem(createdCard, hotkeyInfo);
+}
+
 displayAddHotkey();
 displayHotkeys();
 
 function createCard(domainName) {
+  let cardSelector = '[domain-name=\'' + domainName + '\']';
+  let existCardDiv = document.querySelector(cardSelector);
+  if (existCardDiv != undefined) {
+    return existCardDiv;
+  }
   let domainCardDiv = document.createElement('div');
   let domainCardTemplate = document.getElementById('domain_card_template');
   domainCardDiv.append(domainCardTemplate.content.cloneNode(true));
+  domainCardDiv.setAttribute('class', 'domain_card');
+  domainCardDiv.setAttribute('domain-name', domainName);
   domainCardDiv.querySelector('.domain_name').textContent = domainName;
   domainCardDiv.addEventListener('delete-hotkey-item', event => {
     if (event.detail === 'clearAllHotkeys') {
@@ -130,10 +150,18 @@ function createCardItems(card, sameOriginMap) {
 }
 
 function createCardItem(card, hotkeyInfo) {
+  let itemSelector = '[hotkey-name=\'' + hotkeyInfo.name + '\']';
+  let exitItemDiv = card.querySelector(itemSelector);
+  if (exitItemDiv != undefined) {
+    exitItemDiv.remove();
+    console.log("remove the same name item");
+  }
   let cardItems = card.querySelector('.domain_card_items');
   let cardItemTemplate = document.getElementById('domain_card_item_template');
   let cardItemDiv = document.createElement('div');
   cardItemDiv.append(cardItemTemplate.content.cloneNode(true));
+  cardItemDiv.setAttribute('class', 'domain_card_item');
+  cardItemDiv.setAttribute('hotkey-name', hotkeyInfo.name);
   let itemName = cardItemDiv.querySelector('.operation_name');
   itemName.value = hotkeyInfo.name;
   let itemHotkey = cardItemDiv.querySelector('.hotkey_set');
@@ -152,6 +180,11 @@ function createCardItem(card, hotkeyInfo) {
     if (itemName.value.trim() == "") {
       console.log("the operation name can not be empty, ignore save action!");
       itemWarning.textContent = "the operation name can not be empty";
+      return;
+    }
+    if (itemName.value.trim().includes('\'')) {
+      console.log("the operation name invalid, ignore save action!");
+      itemWarning.textContent = "the operation name can not include '\''!";
       return;
     }
     if (itemHotkey.value.trim() == "") {
@@ -179,6 +212,7 @@ function createCardItem(card, hotkeyInfo) {
     }, function (result) {
       console.log("modified hotkey!");
       itemWarning.hidden = true;
+      cardItemDiv.setAttribute('hotkey-name', hotkeyInfo.name);
     });
   };
   cardItemDiv.querySelector('.clear').onclick = () => {
