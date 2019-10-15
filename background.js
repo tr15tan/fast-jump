@@ -11,6 +11,8 @@ chrome.storage.sync.get(null, function(result) {
   console.log(result);
   // we ues for...in cz we need key for filter
   for (let key in result) {
+    if (key === 'navTop' || key === 'navBottom') continue;
+
     let hotkeyInfo = result[key];
     if (domainMap.has(hotkeyInfo.domain)) {
       let sameOriginMap = domainMap.get(hotkeyInfo.domain);
@@ -43,9 +45,9 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
 
 chrome.storage.onChanged.addListener(function(changes, namespace) {
   for (let key in changes) {
+    if (key === 'navTop' || key === 'navBottom') continue;
 
     let storageChange = changes[key];
-
     if (storageChange.oldValue === undefined) {
       console.log("add new hotkey " + key);
       let change = storageChange.newValue;

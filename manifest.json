@@ -25,5 +25,8 @@
     "16": "images/fastjump16.png",
     "48": "images/fastjump48.png",
     "128": "images/fastjump128.png"
-  }
+  },
+  "web_accessible_resources": [
+    "images/*.png"
+  ]
 }

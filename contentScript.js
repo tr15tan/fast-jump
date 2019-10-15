@@ -46,6 +46,13 @@ chrome.storage.onChanged.addListener(function(changes, namespace) {
                 storageChange.newValue);
 
 
+    if (key === 'navTop') {
+      displayNavButton('top', storageChange.newValue);
+      continue;
+    } else if (key === 'navBottom') {
+      displayNavButton('bottom', storageChange.newValue);
+      continue;
+    }
     if (storageChange.oldValue != undefined) {
       console.log("oldValue = ");
       console.log(storageChange.oldValue);
@@ -303,3 +310,76 @@ document.addEventListener('DOMContentLoaded', startObserver());
 function startObserver() {
   observer.observe(document.body, {childList: true, subtree: true});
 }
+
+function displayNavigationButton() {
+  chrome.storage.sync.get(['navTop'], function (result) {
+    displayNavButton('top', result.navTop);
+  });
+  chrome.storage.sync.get(['navBottom'], function (result) {
+    displayNavButton('bottom', result.navBottom);
+  });
+}
+
+function displayNavButton(direction, enable) {
+  switch (direction) {
+    case 'top':
+      let navTop;
+      if (enable) {
+        navTop = document.createElement("img");
+        navTop.setAttribute('class', 'navButton');
+        navTop.setAttribute('direction', 'top');
+        navTop.setAttribute('alt', 'navigate to top');
+        //navTop.setAttribute('role', 'button');
+        navTop.src = chrome.runtime.getURL('images/nav_top_white_48dp.png');
+        navTop.style = `position:fixed;bottom:120px;right:20px;height:90px;
+            background:rgba(0, 0, 0, 0.26);cursor:pointer;border:none;
+            border-radius:5px;`;
+        navTop.addEventListener('click', function () {
+          window.scrollTo(0, 0);
+        });
+        document.body.append(navTop);
+        console.log("append navTop button to body");
+      } else {
+        navTop = document.querySelector('.navButton[direction="top"]');
+        if (navTop != null) {
+          navTop.remove();
+          console.log("remove navTop button from body....");
+        }
+      }
+      break;
+    case 'bottom':
+      let navBottom;
+      if (enable) {
+        navBottom = document.createElement("img");
+        navBottom.setAttribute('class', 'navButton');
+        navBottom.setAttribute('direction', 'bottom');
+        navBottom.setAttribute('alt', 'navigate to bottom');
+        //navBottom.setAttribute('role', 'button');
+        navBottom.src = chrome.runtime.getURL('images/nav_bottom_white_48dp.png');
+        navBottom.style = `position:fixed;bottom:20px;right:20px;height:90px;
+            background:rgba(0, 0, 0, 0.26);cursor:pointer;border:none;
+            border-radius:5px;`;
+        navBottom.addEventListener('click', function () {
+          let scrollHeight = Math.max(
+            document.body.scrollHeight, document.documentElement.scrollHeight,
+            document.body.offsetHeight, document.documentElement.offsetHeight,
+            document.body.clientHeight, document.documentElement.clientHeight
+          );
+          window.scrollTo(0, scrollHeight);
+        });
+        document.body.append(navBottom);
+        console.log("append navBottom button to body");
+      } else {
+        navBottom = document.querySelector('.navButton[direction="bottom"]');
+        if (navBottom != null) {
+          navBottom.remove();
+          console.log("remove navBottom button from body....");
+        }
+      }
+      break;
+    default:
+      break;
+  }
+}
+
+displayNavigationButton();

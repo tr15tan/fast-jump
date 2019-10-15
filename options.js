@@ -254,3 +254,33 @@ function createCardItem(card, hotkeyInfo) {
   };
   cardItems.append(cardItemDiv);
 }
+
+let otherOptions = document.getElementById('other_options');
+let navTop = otherOptions.querySelector('.nav_top');
+chrome.storage.sync.get(['navTop'], function (result) {
+  navTop.checked = result.navTop;
+});
+let navBottom = otherOptions.querySelector('.nav_bottom');
+chrome.storage.sync.get(['navBottom'], function (result) {
+  navBottom.checked = result.navBottom;
+});
+navTop.closest("label").onclick = function (event) {
+  let checked = navTop.checked;
+  chrome.storage.sync.set({
+    navTop: checked
+  }, function (result) {
+    chrome.storage.sync.get(['navTop'], function (result) {
+      //console.log("set navTop = " + result.navTop);
+    });
+  });
+}
+navBottom.closest("label").onclick = function (event) {
+  let checked = navBottom.checked;
+  chrome.storage.sync.set({
+    navBottom: checked
+  }, function (result) {
+    chrome.storage.sync.get(['navBottom'], function (result) {
+      //console.log("set navBottom = " + result.navBottom);
+    });
+  });
+}
