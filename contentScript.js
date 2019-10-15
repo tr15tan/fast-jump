@@ -196,11 +196,36 @@ function locateElement(hotkeyInfo) {
 
 function createHotkeyHandler(targetElement, hotkeyInfo) {
   return function(event){
-    let hotkeySet = hotkeyInfo.hotkeySet.split('-');
+    let hotkeySet = hotkeyInfo.hotkeySet.split('+');
+    // the last element of hotkeySet is "", which is redundant
+    hotkeySet.pop();
 
-    //for (let hotkey of hotkeySet)
-    // assume we only support single-key hotkey
-    if(event.code != hotkeySet[0]) return;
+    let ctrlKey = hotkeySet.indexOf("ctrlKey");
+    if (ctrlKey != -1) {
+      if (!event.ctrlKey) return;
+      hotkeySet.splice(ctrlKey, 1);
+    }
+    let altKey = hotkeySet.indexOf("altKey");
+    if (altKey != -1) {
+      if (!event.altKey) return;
+      hotkeySet.splice(altKey, 1);
+    }
+    let shiftKey = hotkeySet.indexOf("shiftKey");
+    if (shiftKey != -1) {
+      if (!event.shiftKey) return;
+      hotkeySet.splice(shiftKey, 1);
+    }
+    let metaKey = hotkeySet.indexOf("metaKey");
+    if (metaKey != -1) {
+      if (!event.metaKey) return;
+      hotkeySet.splice(metaKey, 1);
+    }
+    // do not support more than one keycode left except keys above
+    if (hotkeySet.length > 1) {
+      return;
+    } else if (hotkeySet.length == 1) {
+      if (event.code != hotkeySet[0]) return;
+    }
 
     if (hotkeyInfo.validWhenVisible) {
       if (!isVisible(targetElement)) return;

@@ -33,11 +33,7 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
 let addHotkeyItem = document.getElementById('add_hotkey_item');
 let operationName = addHotkeyItem.querySelector('.operation_name');
 let hotkeySet = addHotkeyItem.querySelector('.hotkey_set');
-hotkeySet.onkeydown = function (event) {
-  event.preventDefault(); // prevent display the input key after event code
-  let text = event.code;
-  this.value += text + "-";
-};
+hotkeySet.onkeydown = hotkeyInputHandler;
 let validWhenVisible = addHotkeyItem.querySelector('.valid_when_visible');
 let operation = addHotkeyItem.querySelector('.operation');
 let saveButton = addHotkeyItem.querySelector('.save');
@@ -92,6 +88,28 @@ clearButton.onclick = () => {
   validWhenVisible.checked = true;
   operation.options[0].selected = true;
 };
+
+function hotkeyInputHandler(event) {
+  event.preventDefault(); // prevent display the input key after event code
+  if (event.ctrlKey) {
+    if (!this.value.includes("ctrlKey")) this.value += "ctrlKey+";
+  }
+  if (event.altKey) {
+    if (!this.value.includes("altKey")) this.value += "altKey+";
+  }
+  if (event.shiftKey) {
+    if (!this.value.includes("shiftKey")) this.value += "shiftKey+";
+  }
+  if (event.metaKey) {
+    if (!this.value.includes("metaKey")) this.value += "metaKey+";
+  }
+  if (event.code != "ControlLeft" && event.code != "ControlRight" &&
+      event.code != "AltLeft" && event.code != "AltRight" &&
+      event.code != "ShiftLeft" && event.code != "ShiftRight" &&
+      event.code != "MetaLeft" && event.code != "MetaRight") {
+    this.value += event.code + "+";
+  }
+}
 
 function displayAddHotkey() {
   if (objectInfo === undefined) {
@@ -166,11 +184,7 @@ function createCardItem(card, hotkeyInfo) {
   itemName.value = hotkeyInfo.name;
   let itemHotkey = cardItemDiv.querySelector('.hotkey_set');
   itemHotkey.value = hotkeyInfo.hotkeySet;
-  itemHotkey.onkeydown = function (event) {
-    event.preventDefault(); // prevent display the input key after event code
-    let text = event.code;
-    this.value += text + "-";
-  };
+  itemHotkey.onkeydown = hotkeyInputHandler;
   let itemValidCondition = cardItemDiv.querySelector('.valid_when_visible');
   itemValidCondition.checked = hotkeyInfo.validWhenVisible;
   let itemOperation = cardItemDiv.querySelector('.operation');
