@@ -79,6 +79,7 @@ saveButton.onclick = () => {
     displayAddedHotkey(objectInfo);
     objectInfo = undefined;
     displayAddHotkey();
+    alert("saved hotkey!");
   });
 };
 
@@ -227,6 +228,7 @@ function createCardItem(card, hotkeyInfo) {
       console.log("modified hotkey!");
       itemWarning.hidden = true;
       cardItemDiv.setAttribute('hotkey-name', hotkeyInfo.name);
+      alert("modified hotkey!");
     });
   };
   cardItemDiv.querySelector('.clear').onclick = () => {
