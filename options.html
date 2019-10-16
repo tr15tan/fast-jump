@@ -2,24 +2,35 @@
 <html>
 
 <head>
-  <title>Fast Jump Options</title>
+  <title data-i18n-content="title_options_page">Fast Jump Options</title>
 </head>
 
 <body>
   <div id="add_hotkey_item">
     <div class="add_hotkey_item_title">
-      <span>add new hotkey:</span>
+      <span data-i18n-content="title_add_hotkey_item">add new hotkey:</span>
     </div>
-    <input type="text" class="operation_name" autofocus placeholder="give this operation a name">
-    <input type="text" class="hotkey_set" placeholder="press keys here">
+    <input type="text" class="operation_name" autofocus
+        placeholder="give this operation a name"
+        data-i18n-placeholder="item_name_placeholder">
+    <input type="text" class="hotkey_set" placeholder="press keys here"
+        data-i18n-placeholder="item_hotkeyset_placeholder">
     <input type="checkbox" class="valid_when_visible" name="valid_condition" checked>
-    <label for="valid_condition">valid when visible</label>
+    <label for="valid_condition"
+        data-i18n-content="checkbox_hotkey_valid_when_visible">
+      valid when visible
+    </label>
     <select class="operation">
-      <option value="click" selected>click(default)</option>
-      <option value="focus">focus</option>
+      <option value="click" data-i18n-content="option_hotkeyset_operation_click"
+          autofocus>
+        click
+      </option>
+      <option value="focus" data-i18n-content="option_hotkeyset_operation_focus">
+        focus
+      </option>
     </select>
-    <button class="save">save</button>
-    <button class="clear">clear</button>
+    <button class="save" data-i18n-content="button_save">save</button>
+    <button class="clear" data-i18n-content="button_clear">clear</button>
     <div class="warning"></div>
   </div>
 
@@ -35,30 +46,42 @@
   </template>
 
   <template id="domain_card_item_template">
-    <input type="text" class="operation_name" placeholder="give this operation a name">
-    <input type="text" class="hotkey_set" placeholder="press keys here">
+    <input type="text" class="operation_name"
+        placeholder="give this operation a name"
+        data-i18n-placeholder="item_name_placeholder">
+    <input type="text" class="hotkey_set" placeholder="press keys here"
+        data-i18n-placeholder="item_hotkeyset_placeholder">
     <input type="checkbox" class="valid_when_visible" name="valid_condition">
-    <label for="valid_condition">valid when visible</label>
+    <label for="valid_condition"
+        data-i18n-content="checkbox_hotkey_valid_when_visible">
+      valid when visible
+    </label>
     <select class="operation">
-      <option value="click">click</option>
-      <option value="focus">focus</option>
+      <option value="click" data-i18n-content="option_hotkeyset_operation_click">
+        click
+      </option>
+      <option value="focus" data-i18n-content="option_hotkeyset_operation_focus">
+        focus
+      </option>
     </select>
-    <button class="save">save</button>
-    <button class="clear">clear</button>
-    <button class="delete">delete</button>
+    <button class="save" data-i18n-content="button_save">save</button>
+    <button class="clear" data-i18n-content="button_clear">clear</button>
+    <button class="delete" data-i18n-content="button_delete">delete</button>
     <div class="warning"></div>
   </template>
 
   <div id="other_options">
     <div class="checkbox">
-      <label>
-        <input type="checkbox" class="nav_top" name="nav_top">
-        navigate to top</label>
+      <input type="checkbox" class="nav_top" name="nav_top">
+      <label for="nav_top" data-i18n-content="checkbox_navigate_to_top">
+        navigate to top
+      </label>
     </div>
     <div class="checkbox">
-        <label>
-          <input type="checkbox" class="nav_bottom" name="nav_bottom">
-          navigate to bottom</label>
+      <input type="checkbox" class="nav_bottom" name="nav_bottom">
+      <label for="nav_bottom" data-i18n-content="checkbox_navigate_to_bottom">
+        navigate to bottom
+      </label>
       </div>
   </div>
 

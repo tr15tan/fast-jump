@@ -1,0 +1,59 @@
+{
+    "extension_name": {
+      "message": "快速跳转"
+    },
+    "extension_description": {
+      "message": "定制你自己的快捷键！"
+    },
+    "title_options_page": {
+        "message": "快速跳转 设置"
+    },
+    "checkbox_navigate_to_top": {
+      "message": "回到顶部"
+    },
+    "checkbox_navigate_to_bottom": {
+      "message": "去到底部"
+    },
+    "checkbox_hotkey_valid_when_visible": {
+      "message": "可见时生效"
+    },
+    "title_add_hotkey_item": {
+      "message": "新增自定义按键："
+    },
+    "item_name_placeholder": {
+      "message": "自定义操作名称"
+    },
+    "item_hotkeyset_placeholder": {
+      "message": "在此处按键"
+    },
+    "warning_operation_name_empty": {
+      "message": "操作名称不能为空！"
+    },
+    "warning_hotkey_empty": {
+      "message": "按键不能为空！"
+    },
+    "option_hotkeyset_operation_click": {
+      "message": "点击"
+    },
+    "option_hotkeyset_operation_focus": {
+      "message": "聚焦"
+    },
+    "button_save": {
+      "message": "保存"
+    },
+    "button_clear": {
+      "message": "清除"
+    },
+    "button_delete": {
+      "message": "删除"
+    },
+    "alert_save_sucess": {
+      "message": "保存成功！"
+    },
+    "alert_modify_sucess": {
+      "message": "修改成功！"
+    },
+    "confirm_delete_item": {
+      "message": "确定删除该快捷键吗？"
+    }
+  }

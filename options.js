@@ -1,25 +1,3 @@
-//let messageTabId;
-
-//chrome.storage.sync.get(null, function(result){
-//for (let key in result) {
-//  console.log("key = " + key + " value = " + JSON.stringify(result[key]));
-//}
-
-//let tabId;
-//
-//chrome.tabs.onActivated.addListener((activeInfo) => {
-//  //console.log("tabs.onActivated, tabId = " + activeInfo.tabId);
-//  if (activeInfo.tabId === tabId) {
-//    console.log("focus on this tab, refresh");
-//    displayAddHotkey();
-//  }
-//})
-//
-//chrome.tabs.getCurrent((tab) => {
-//  //console.log("current tabId = " + tab.id);
-//  tabId = tab.id;
-//})
-
 // save the selected element from background.js
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   if (request.action === 'save this') {
@@ -45,7 +23,7 @@ let objectInfo;
 saveButton.onclick = () => {
   if (operationName.value.trim() == "") {
     console.log("the operation name can not be empty, ignore save action!");
-    warning.textContent = "the operation name can not be empty!";
+    warning.textContent = chrome.i18n.getMessage("warning_operation_name_empty");
     return;
   }
   if (operationName.value.trim().includes('\'')) {
@@ -55,7 +33,7 @@ saveButton.onclick = () => {
   }
   if (hotkeySet.value.trim() == "") {
     console.log("the hotkey can not be empty, ignore save action!");
-    warning.textContent = "the hotkey can not be empty";
+    warning.textContent = chrome.i18n.getMessage("warning_hotkey_empty");
     return;
   }
   if (operation.value == "") {
@@ -77,9 +55,10 @@ saveButton.onclick = () => {
     operation.options[0].selected = true;
     warning.hidden = true;
     displayAddedHotkey(objectInfo);
+    internationalize();
     objectInfo = undefined;
     displayAddHotkey();
-    alert("saved hotkey!");
+    alert(chrome.i18n.getMessage("alert_save_sucess"));
   });
 };
 
@@ -138,9 +117,6 @@ function displayAddedHotkey(hotkeyInfo) {
   createCardItem(createdCard, hotkeyInfo);
 }
 
-displayAddHotkey();
-displayHotkeys();
-
 function createCard(domainName) {
   let cardSelector = '[domain-name=\'' + domainName + '\']';
   let existCardDiv = document.querySelector(cardSelector);
@@ -194,7 +170,7 @@ function createCardItem(card, hotkeyInfo) {
   cardItemDiv.querySelector('.save').onclick = () => {
     if (itemName.value.trim() == "") {
       console.log("the operation name can not be empty, ignore save action!");
-      itemWarning.textContent = "the operation name can not be empty";
+      itemWarning.textContent = chrome.i18n.getMessage("warning_operation_name_empty");
       return;
     }
     if (itemName.value.trim().includes('\'')) {
@@ -204,7 +180,7 @@ function createCardItem(card, hotkeyInfo) {
     }
     if (itemHotkey.value.trim() == "") {
       console.log("the hotkey can not be empty, ignore save action!");
-      itemWarning.textContent = "the hotkey can not be empty";
+      itemWarning.textContent = chrome.i18n.getMessage("warning_hotkey_empty");
       return;
     }
     if (itemOperation.value == "") {
@@ -228,7 +204,7 @@ function createCardItem(card, hotkeyInfo) {
       console.log("modified hotkey!");
       itemWarning.hidden = true;
       cardItemDiv.setAttribute('hotkey-name', hotkeyInfo.name);
-      alert("modified hotkey!");
+      alert(chrome.i18n.getMessage("alert_modify_sucess"));
     });
   };
   cardItemDiv.querySelector('.clear').onclick = () => {
@@ -236,7 +212,7 @@ function createCardItem(card, hotkeyInfo) {
     itemHotkey.value = "";
   };
   cardItemDiv.querySelector('.delete').onclick = () => {
-    let result = confirm("Do you really want to delete this hotkey?");
+    let result = confirm(chrome.i18n.getMessage("confirm_delete_item"));
     if (result) {
       chrome.storage.sync.remove([hotkeyInfo.domain + "~" + hotkeyInfo.name],
         function () {
@@ -255,32 +231,57 @@ function createCardItem(card, hotkeyInfo) {
   cardItems.append(cardItemDiv);
 }
 
-let otherOptions = document.getElementById('other_options');
-let navTop = otherOptions.querySelector('.nav_top');
-chrome.storage.sync.get(['navTop'], function (result) {
-  navTop.checked = result.navTop;
-});
-let navBottom = otherOptions.querySelector('.nav_bottom');
-chrome.storage.sync.get(['navBottom'], function (result) {
-  navBottom.checked = result.navBottom;
-});
-navTop.closest("label").onclick = function (event) {
-  let checked = navTop.checked;
-  chrome.storage.sync.set({
-    navTop: checked
-  }, function (result) {
-    chrome.storage.sync.get(['navTop'], function (result) {
-      //console.log("set navTop = " + result.navTop);
+function displayOtherOptions() {
+  let otherOptions = document.getElementById('other_options');
+  let navTop = otherOptions.querySelector('.nav_top');
+  chrome.storage.sync.get(['navTop'], function (result) {
+    navTop.checked = result.navTop;
+  });
+  let navBottom = otherOptions.querySelector('.nav_bottom');
+  chrome.storage.sync.get(['navBottom'], function (result) {
+    navBottom.checked = result.navBottom;
+  });
+  navTop.closest("div").onclick = function (event) {
+    navTop.checked = !navTop.checked;
+    let checked = navTop.checked;
+    chrome.storage.sync.set({
+      navTop: checked
+    }, function (result) {
+      chrome.storage.sync.get(['navTop'], function (result) {
+        //console.log("set navTop = " + result.navTop);
+      });
     });
+  }
+  navBottom.closest("div").onclick = function (event) {
+    navBottom.checked = !navBottom.checked;
+    let checked = navBottom.checked;
+    chrome.storage.sync.set({
+      navBottom: checked
+    }, function (result) {
+      chrome.storage.sync.get(['navBottom'], function (result) {
+        //console.log("set navBottom = " + result.navBottom);
+      });
+    });
+  }
+}
+
+// internationalization
+function internationalize() {
+  document.querySelectorAll('[data-i18n-content]').forEach(function(element) {
+    let message = chrome.i18n.getMessage(element.getAttribute('data-i18n-content'));
+    if (message) {
+      element.textContent = message;
+    }
+  });
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(function(element) {
+    let message = chrome.i18n.getMessage(element.getAttribute('data-i18n-placeholder'));
+    if (message) {
+      element.setAttribute('placeholder', message);
+    }
   });
 }
-navBottom.closest("label").onclick = function (event) {
-  let checked = navBottom.checked;
-  chrome.storage.sync.set({
-    navBottom: checked
-  }, function (result) {
-    chrome.storage.sync.get(['navBottom'], function (result) {
-      //console.log("set navBottom = " + result.navBottom);
-    });
-  });
-}
+
+displayAddHotkey();
+displayHotkeys();
+displayOtherOptions();
+internationalize();

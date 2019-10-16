@@ -1,0 +1,59 @@
+{
+  "extension_name": {
+    "message": "Fast Jump"
+  },
+  "extension_description": {
+    "message": "allow customize your own hotkeys!"
+  },
+  "title_options_page": {
+    "message": "Fast Jump Options"
+  },
+  "checkbox_navigate_to_top": {
+    "message": "navigate to top"
+  },
+  "checkbox_navigate_to_bottom": {
+    "message": "navigate to bottom"
+  },
+  "checkbox_hotkey_valid_when_visible": {
+    "message": "valid when visible"
+  },
+  "title_add_hotkey_item": {
+    "message": "add new hotkey:"
+  },
+  "item_name_placeholder": {
+    "message": "give this operation a name"
+  },
+  "item_hotkeyset_placeholder": {
+    "message": "press keys here"
+  },
+  "warning_operation_name_empty": {
+    "message": "the operation name can not be empty!"
+  },
+  "warning_hotkey_empty": {
+    "message": "the hotkey can not be empty!"
+  },
+  "option_hotkeyset_operation_click": {
+    "message": "click"
+  },
+  "option_hotkeyset_operation_focus": {
+    "message": "focus"
+  },
+  "button_save": {
+    "message": "save"
+  },
+  "button_clear": {
+    "message": "clear"
+  },
+  "button_delete": {
+    "message": "delete"
+  },
+  "alert_save_sucess": {
+    "message": "saved successfully!"
+  },
+  "alert_modify_sucess": {
+    "message": "modified successfully!"
+  },
+  "confirm_delete_item": {
+    "message": "Do you really want to delete this hotkey?"
+  }
+}
