@@ -5,6 +5,9 @@
   "extension_description": {
     "message": "allow customize your own hotkeys!"
   },
+  "context_menu_add_hotkey": {
+    "message": "Add hot key for this element"
+  },
   "title_options_page": {
     "message": "Fast Jump Options"
   },

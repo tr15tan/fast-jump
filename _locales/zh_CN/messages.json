@@ -5,6 +5,9 @@
     "extension_description": {
       "message": "定制你自己的快捷键！"
     },
+    "context_menu_add_hotkey": {
+      "message": "为此元素添加快捷键"
+    },
     "title_options_page": {
         "message": "快速跳转 设置"
     },

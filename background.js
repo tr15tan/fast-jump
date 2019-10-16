@@ -91,10 +91,10 @@ chrome.runtime.onInstalled.addListener(function () {
   //let contexts = ["link", "image"];
   //for (let i = 0; i < contexts.length; i++) {
   //  let context = contexts[i];
-  let title = "Add hot key for this element";
+  let message = chrome.i18n.getMessage("context_menu_add_hotkey");
   let id = chrome.contextMenus.create({
     "id": 'all',
-    "title": title,
+    "title": message,
     "contexts": ['all']
   });
   //  console.log("'" + context + "' item:" + id);
