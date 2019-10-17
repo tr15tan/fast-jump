@@ -50,6 +50,9 @@
   "button_delete": {
     "message": "delete"
   },
+  "button_delete_all_hotkeys": {
+    "message": "delete all hotkeys"
+  },
   "alert_save_sucess": {
     "message": "saved successfully!"
   },
@@ -58,5 +61,8 @@
   },
   "confirm_delete_item": {
     "message": "Do you really want to delete this hotkey?"
+  },
+  "confirm_delete_all_hotkeys": {
+    "message": "Do you really want to delete all hotkeys?"
   }
 }

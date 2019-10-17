@@ -50,6 +50,9 @@
     "button_delete": {
       "message": "删除"
     },
+    "button_delete_all_hotkeys": {
+      "message": "删除所有快捷键"
+    },
     "alert_save_sucess": {
       "message": "保存成功！"
     },
@@ -58,5 +61,8 @@
     },
     "confirm_delete_item": {
       "message": "确定删除该快捷键吗？"
+    },
+    "confirm_delete_all_hotkeys": {
+      "message": "确定删除所有的快捷键吗？"
     }
   }

@@ -263,6 +263,23 @@ function displayOtherOptions() {
       });
     });
   }
+  let deleteAll = otherOptions.querySelector('.delete-all');
+  deleteAll.onclick = function (event) {
+    let result = confirm(chrome.i18n.getMessage("confirm_delete_all_hotkeys"));
+    if (result) {
+      chrome.storage.sync.clear(() => {
+        console.log("clear all storage successfully!");
+        let container = document.querySelector('div#saved_hotkey_container');
+        console.log(container.childNodes);
+        while (container.firstChild) {
+          console.log(container.firstChild);
+          container.removeChild(container.firstChild);
+          navTop.checked = false;
+          navBottom.checked = false;
+        }
+      })
+    }
+  }
 }
 
 // internationalization
