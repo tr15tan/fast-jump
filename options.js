@@ -241,8 +241,7 @@ function displayOtherOptions() {
   chrome.storage.sync.get(['navBottom'], function (result) {
     navBottom.checked = result.navBottom;
   });
-  navTop.closest("div").onclick = function (event) {
-    if (event.target.localName == 'label') navTop.checked = !navTop.checked;
+  navTop.onclick = function (event) {
     let checked = navTop.checked;
     chrome.storage.sync.set({
       navTop: checked
@@ -252,8 +251,7 @@ function displayOtherOptions() {
       });
     });
   }
-  navBottom.closest("div").onclick = function (event) {
-    if (event.target.localName == 'label') navBottom.checked = !navBottom.checked;
+  navBottom.onclick = function (event) {
     let checked = navBottom.checked;
     chrome.storage.sync.set({
       navBottom: checked
