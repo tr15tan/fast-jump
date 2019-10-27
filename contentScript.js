@@ -29,8 +29,7 @@ document.addEventListener('contextmenu', function (event) {
   current.parentElementClassList = parentElementClassList;
   current.parentElementId = parentElement.id;
 
-  chrome.runtime.sendMessage({action: "ready to save",
-      object: current});
+  chrome.runtime.sendMessage({action: "ready to save", object: current});
 
 });
 
@@ -321,6 +320,19 @@ function displayNavigationButton() {
 }
 
 function displayNavButton(direction, enable) {
+  let shadowDiv = document.querySelector('div.navBtnContainer');
+  if (shadowDiv === null) {
+    shadowDiv = document.createElement('div');
+    shadowDiv.setAttribute('class', 'navBtnContainer');
+    shadowDiv.style = `display:flex;flex-direction:column;position:fixed;
+        bottom:10%;right:10%;z-index:99`;
+    document.body.append(shadowDiv);
+  }
+  let shadowRoot = shadowDiv.shadowRoot;
+  if (shadowRoot === null) {
+    shadowRoot = shadowDiv.attachShadow({mode: 'open'});
+  }
+
   switch (direction) {
     case 'top':
       let navTop;
@@ -329,21 +341,20 @@ function displayNavButton(direction, enable) {
         navTop.setAttribute('class', 'navButton');
         navTop.setAttribute('direction', 'top');
         navTop.setAttribute('alt', 'navigate to top');
-        //navTop.setAttribute('role', 'button');
         navTop.src = chrome.runtime.getURL('images/nav_top_white_48dp.png');
-        navTop.style = `position:fixed;bottom:120px;right:20px;height:90px;
-            background:rgba(0, 0, 0, 0.26);cursor:pointer;border:none;
-            border-radius:5px;`;
+        navTop.style =
+            `background: rgba(0, 0, 0, 0.26); cursor: pointer; border: none;
+            border-radius: 5px; width: 90px; display: block; margin: 10px;
+            order: 1; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, .2),
+            0 6px 20px 0 rgba(0, 0, 0, .19);`;
         navTop.addEventListener('click', function () {
           window.scrollTo(0, 0);
         });
-        document.body.append(navTop);
-        console.log("append navTop button to body");
+        shadowRoot.append(navTop);
       } else {
-        navTop = document.querySelector('.navButton[direction="top"]');
+        navTop = shadowRoot.querySelector('.navButton[direction="top"]');
         if (navTop != null) {
           navTop.remove();
-          console.log("remove navTop button from body....");
         }
       }
       break;
@@ -354,11 +365,13 @@ function displayNavButton(direction, enable) {
         navBottom.setAttribute('class', 'navButton');
         navBottom.setAttribute('direction', 'bottom');
         navBottom.setAttribute('alt', 'navigate to bottom');
-        //navBottom.setAttribute('role', 'button');
-        navBottom.src = chrome.runtime.getURL('images/nav_bottom_white_48dp.png');
-        navBottom.style = `position:fixed;bottom:20px;right:20px;height:90px;
-            background:rgba(0, 0, 0, 0.26);cursor:pointer;border:none;
-            border-radius:5px;`;
+        navBottom.src =
+            chrome.runtime.getURL('images/nav_bottom_white_48dp.png');
+        navBottom.style =
+            `background: rgba(0, 0, 0, 0.26); cursor: pointer; border: none;
+            border-radius: 5px; width: 90px; display: block; margin: 10px;
+            order: 2; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, .2),
+            0 6px 20px 0 rgba(0, 0, 0, .19);`;
         navBottom.addEventListener('click', function () {
           let scrollHeight = Math.max(
             document.body.scrollHeight, document.documentElement.scrollHeight,
@@ -367,13 +380,11 @@ function displayNavButton(direction, enable) {
           );
           window.scrollTo(0, scrollHeight);
         });
-        document.body.append(navBottom);
-        console.log("append navBottom button to body");
+        shadowRoot.append(navBottom);
       } else {
-        navBottom = document.querySelector('.navButton[direction="bottom"]');
+        navBottom = shadowRoot.querySelector('.navButton[direction="bottom"]');
         if (navBottom != null) {
           navBottom.remove();
-          console.log("remove navBottom button from body....");
         }
       }
       break;
