@@ -8,6 +8,9 @@
   "context_menu_add_hotkey": {
     "message": "Add hot key for this element"
   },
+  "tip_navigate_back": {
+      "message": "navigate back"
+  },
   "title_options_page": {
     "message": "Fast Jump Options"
   },

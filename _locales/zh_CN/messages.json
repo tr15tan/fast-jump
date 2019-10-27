@@ -8,6 +8,9 @@
     "context_menu_add_hotkey": {
       "message": "为此元素添加快捷键"
     },
+    "tip_navigate_back": {
+        "message": "回到原处"
+    },
     "title_options_page": {
         "message": "快速跳转 设置"
     },
