@@ -364,6 +364,8 @@ function displayNavButton(direction, enable) {
             // jump back
             window.scrollTo(0, navTop.dataset.posBefore);
             navTop.dataset.posBefore = -1;
+            navTop.setAttribute('title',
+                chrome.i18n.getMessage("checkbox_navigate_to_top"));
             navTop.src =
                 chrome.runtime.getURL('images/nav_top_white_48dp.png');
           }
@@ -414,6 +416,8 @@ function displayNavButton(direction, enable) {
             // jump back
             window.scrollTo(0, navBottom.dataset.posBefore);
             navBottom.dataset.posBefore = -1;
+            navBottom.setAttribute('title',
+                chrome.i18n.getMessage("checkbox_navigate_to_bottom"));
             navBottom.src =
                 chrome.runtime.getURL('images/nav_bottom_white_48dp.png');
           }
