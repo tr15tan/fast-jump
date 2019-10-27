@@ -341,6 +341,7 @@ function displayNavButton(direction, enable) {
         navTop.setAttribute('class', 'navButton');
         navTop.setAttribute('direction', 'top');
         navTop.setAttribute('alt', 'navigate to top');
+        navTop.setAttribute('data-pos-before', '-1');
         navTop.src = chrome.runtime.getURL('images/nav_top_white_48dp.png');
         navTop.style =
             `background: rgba(0, 0, 0, 0.26); cursor: pointer; border: none;
@@ -348,7 +349,20 @@ function displayNavButton(direction, enable) {
             order: 1; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, .2),
             0 6px 20px 0 rgba(0, 0, 0, .19);`;
         navTop.addEventListener('click', function () {
-          window.scrollTo(0, 0);
+          let posCurent = window.pageYOffset;
+          if (posCurent != 0 && navTop.dataset.posBefore == -1) {
+            // save & jump
+            navTop.dataset.posBefore = posCurent;
+            window.scrollTo(0, 0);
+            navTop.src =
+                chrome.runtime.getURL('images/nav_back_white_48dp.png');
+          } else if (posCurent == 0 && navTop.dataset.posBefore != -1) {
+            // jump back
+            window.scrollTo(0, navTop.dataset.posBefore);
+            navTop.dataset.posBefore = -1;
+            navTop.src =
+                chrome.runtime.getURL('images/nav_top_white_48dp.png');
+          }
         });
         shadowRoot.append(navTop);
       } else {
@@ -365,6 +379,7 @@ function displayNavButton(direction, enable) {
         navBottom.setAttribute('class', 'navButton');
         navBottom.setAttribute('direction', 'bottom');
         navBottom.setAttribute('alt', 'navigate to bottom');
+        navBottom.setAttribute('data-pos-before', '-1');
         navBottom.src =
             chrome.runtime.getURL('images/nav_bottom_white_48dp.png');
         navBottom.style =
@@ -378,7 +393,22 @@ function displayNavButton(direction, enable) {
             document.body.offsetHeight, document.documentElement.offsetHeight,
             document.body.clientHeight, document.documentElement.clientHeight
           );
-          window.scrollTo(0, scrollHeight);
+          let posCurent = window.pageYOffset;
+          if (posCurent != scrollHeight && navBottom.dataset.posBefore == -1) {
+            // save & jump
+            navBottom.dataset.posBefore = posCurent;
+            window.scrollTo(0, scrollHeight);
+            navBottom.src =
+                chrome.runtime.getURL('images/nav_back_white_48dp.png');
+            reachableBottomPos = window.pageYOffset;
+          } else if (posCurent == reachableBottomPos &&
+              navBottom.dataset.posBefore != -1) {
+            // jump back
+            window.scrollTo(0, navBottom.dataset.posBefore);
+            navBottom.dataset.posBefore = -1;
+            navBottom.src =
+                chrome.runtime.getURL('images/nav_bottom_white_48dp.png');
+          }
         });
         shadowRoot.append(navBottom);
       } else {
@@ -392,5 +422,34 @@ function displayNavButton(direction, enable) {
       break;
   }
 }
+
+// save the previous position in nav buttons as attribute 'data-pos-before',
+// which initial value is -1; save the position in variable reachableBottomPos,
+// where we can actually reach when click nav bottom button, cz we need to share
+// this value both in window.onscroll & navBottom.onclick events, which initial
+// value is -1.
+let reachableBottomPos = -1;
+
+window.addEventListener('scroll', (event) => {
+  let shadowDiv = document.querySelector('div.navBtnContainer');
+  if (shadowDiv != null) {
+    let navTopBtn =
+        shadowDiv.shadowRoot.querySelector('.navButton[direction="top"]');
+    if (navTopBtn != null && navTopBtn.dataset.posBefore != -1 &&
+        window.pageYOffset != 0) {
+      navTopBtn.dataset.posBefore = -1;
+      navTopBtn.src =
+          chrome.runtime.getURL('images/nav_top_white_48dp.png');
+    }
+    let navBottomBtn =
+        shadowDiv.shadowRoot.querySelector('.navButton[direction="bottom"]');
+    if (navBottomBtn != null && navBottomBtn.dataset.posBefore != -1 &&
+        window.pageYOffset != reachableBottomPos) {
+      navBottomBtn.dataset.posBefore = -1;
+      navBottomBtn.src =
+          chrome.runtime.getURL('images/nav_bottom_white_48dp.png');
+    }
+  }
+});
 
 displayNavigationButton();
