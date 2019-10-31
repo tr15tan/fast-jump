@@ -233,6 +233,14 @@ function createCardItem(card, hotkeyInfo) {
 
 function displayOtherOptions() {
   let otherOptions = document.getElementById('other_options');
+  let pageUp = otherOptions.querySelector('.page_up');
+  chrome.storage.sync.get(['pageUp'], function (result) {
+    pageUp.checked = result.pageUp;
+  });
+  let pageDown = otherOptions.querySelector('.page_down');
+  chrome.storage.sync.get(['pageDown'], function (result) {
+    pageDown.checked = result.pageDown;
+  });
   let navTop = otherOptions.querySelector('.nav_top');
   chrome.storage.sync.get(['navTop'], function (result) {
     navTop.checked = result.navTop;
@@ -241,24 +249,40 @@ function displayOtherOptions() {
   chrome.storage.sync.get(['navBottom'], function (result) {
     navBottom.checked = result.navBottom;
   });
+  pageUp.onclick = function (event) {
+    let checked = this.checked;
+    chrome.storage.sync.set({
+      pageUp: checked
+    }, function (result) {
+
+    });
+  }
+  pageDown.onclick = function (event) {
+    let checked = this.checked;
+    chrome.storage.sync.set({
+      pageDown: checked
+    }, function (result) {
+
+    });
+  }
   navTop.onclick = function (event) {
-    let checked = navTop.checked;
+    let checked = this.checked;
     chrome.storage.sync.set({
       navTop: checked
     }, function (result) {
-      chrome.storage.sync.get(['navTop'], function (result) {
-        //console.log("set navTop = " + result.navTop);
-      });
+      //chrome.storage.sync.get(['navTop'], function (result) {
+      //  console.log("set navTop = " + result.navTop);
+      //});
     });
   }
   navBottom.onclick = function (event) {
-    let checked = navBottom.checked;
+    let checked = this.checked;
     chrome.storage.sync.set({
       navBottom: checked
     }, function (result) {
-      chrome.storage.sync.get(['navBottom'], function (result) {
-        //console.log("set navBottom = " + result.navBottom);
-      });
+      //chrome.storage.sync.get(['navBottom'], function (result) {
+      //  console.log("set navBottom = " + result.navBottom);
+      //});
     });
   }
   let deleteAll = otherOptions.querySelector('.delete-all');

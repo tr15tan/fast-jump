@@ -14,6 +14,12 @@
   "title_options_page": {
     "message": "Fast Jump Options"
   },
+  "checkbox_page_up": {
+    "message": "page up"
+  },
+  "checkbox_page_down": {
+    "message": "page down"
+  },
   "checkbox_navigate_to_top": {
     "message": "navigate to top"
   },

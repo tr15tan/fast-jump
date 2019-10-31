@@ -44,8 +44,13 @@ chrome.storage.onChanged.addListener(function(changes, namespace) {
                 storageChange.oldValue,
                 storageChange.newValue);
 
-
-    if (key === 'navTop') {
+    if (key === 'pageUp') {
+      displayNavButton('up', storageChange.newValue);
+      continue;
+    } else if (key === 'pageDown') {
+      displayNavButton('down', storageChange.newValue);
+      continue;
+    } else if (key === 'navTop') {
       displayNavButton('top', storageChange.newValue);
       continue;
     } else if (key === 'navBottom') {
@@ -311,6 +316,12 @@ function startObserver() {
 }
 
 function displayNavigationButton() {
+  chrome.storage.sync.get(['pageUp'], function (result) {
+    displayNavButton('up', result.pageUp);
+  });
+  chrome.storage.sync.get(['pageDown'], function (result) {
+    displayNavButton('down', result.pageDown);
+  });
   chrome.storage.sync.get(['navTop'], function (result) {
     displayNavButton('top', result.navTop);
   });
@@ -325,7 +336,7 @@ function displayNavButton(direction, enable) {
     shadowDiv = document.createElement('div');
     shadowDiv.setAttribute('class', 'navBtnContainer');
     shadowDiv.style = `display:flex;flex-direction:column;position:fixed;
-        bottom:10%;right:10%;z-index:99`;
+        bottom:10%;right:10%;z-index:999`;
     document.body.append(shadowDiv);
   }
   let shadowRoot = shadowDiv.shadowRoot;
@@ -334,6 +345,66 @@ function displayNavButton(direction, enable) {
   }
 
   switch (direction) {
+    case 'up' :
+      let pageUp;
+      if (enable) {
+        pageUp = document.createElement("img");
+        pageUp.setAttribute('class', 'navButton');
+        pageUp.setAttribute('direction', 'up');
+        pageUp.setAttribute('alt', 'page up');
+        pageUp.setAttribute('title',
+            chrome.i18n.getMessage("checkbox_page_up"));
+        pageUp.src = chrome.runtime.getURL('images/page_up_white_48dp.png');
+        pageUp.style =
+            `background: rgba(0, 0, 0, 0.26); cursor: pointer; border: none;
+            border-radius: 5px; width: 90px; display: block; margin: 10px;
+            order: 1; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, .2),
+            0 6px 20px 0 rgba(0, 0, 0, .19);`;
+        pageUp.addEventListener('click', function () {
+          window.scrollBy({
+            top: -(window.innerHeight - 50),  // roll back a little space
+            left: 0,
+            behavior: "smooth"
+          });
+        });
+        shadowRoot.append(pageUp);
+      } else {
+        pageUp = shadowRoot.querySelector('.navButton[direction="up"]');
+        if (pageUp != null) {
+          pageUp.remove();
+        }
+      }
+      break;
+    case 'down' :
+      let pageDown;
+      if (enable) {
+        pageDown = document.createElement("img");
+        pageDown.setAttribute('class', 'navButton');
+        pageDown.setAttribute('direction', 'down');
+        pageDown.setAttribute('alt', 'page down');
+        pageDown.setAttribute('title',
+            chrome.i18n.getMessage("checkbox_page_down"));
+        pageDown.src = chrome.runtime.getURL('images/page_down_white_48dp.png');
+        pageDown.style =
+            `background: rgba(0, 0, 0, 0.26); cursor: pointer; border: none;
+            border-radius: 5px; width: 90px; display: block; margin: 10px;
+            order: 2; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, .2),
+            0 6px 20px 0 rgba(0, 0, 0, .19);`;
+        pageDown.addEventListener('click', function () {
+          window.scrollBy({
+            top: window.innerHeight - 50,  // roll back a little space
+            left: 0,
+            behavior: "smooth"
+          });
+        });
+        shadowRoot.append(pageDown);
+      } else {
+        pageDown = shadowRoot.querySelector('.navButton[direction="down"]');
+        if (pageDown != null) {
+          pageDown.remove();
+        }
+      }
+      break;
     case 'top':
       let navTop;
       if (enable) {
@@ -348,25 +419,25 @@ function displayNavButton(direction, enable) {
         navTop.style =
             `background: rgba(0, 0, 0, 0.26); cursor: pointer; border: none;
             border-radius: 5px; width: 90px; display: block; margin: 10px;
-            order: 1; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, .2),
+            order: 3; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, .2),
             0 6px 20px 0 rgba(0, 0, 0, .19);`;
         navTop.addEventListener('click', function () {
           let posCurent = window.pageYOffset;
-          if (posCurent != 0 && navTop.dataset.posBefore == -1) {
+          if (posCurent != 0 && this.dataset.posBefore == -1) {
             // save & jump
-            navTop.dataset.posBefore = posCurent;
+            this.dataset.posBefore = posCurent;
             window.scrollTo(0, 0);
-            navTop.src =
+            this.src =
                 chrome.runtime.getURL('images/nav_back_white_48dp.png');
-            navTop.setAttribute('title',
+            this.setAttribute('title',
                 chrome.i18n.getMessage("tip_navigate_back"));
-          } else if (posCurent == 0 && navTop.dataset.posBefore != -1) {
+          } else if (posCurent == 0 && this.dataset.posBefore != -1) {
             // jump back
-            window.scrollTo(0, navTop.dataset.posBefore);
-            navTop.dataset.posBefore = -1;
-            navTop.setAttribute('title',
+            window.scrollTo(0, this.dataset.posBefore);
+            this.dataset.posBefore = -1;
+            this.setAttribute('title',
                 chrome.i18n.getMessage("checkbox_navigate_to_top"));
-            navTop.src =
+            this.src =
                 chrome.runtime.getURL('images/nav_top_white_48dp.png');
           }
         });
@@ -393,7 +464,7 @@ function displayNavButton(direction, enable) {
         navBottom.style =
             `background: rgba(0, 0, 0, 0.26); cursor: pointer; border: none;
             border-radius: 5px; width: 90px; display: block; margin: 10px;
-            order: 2; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, .2),
+            order: 4; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, .2),
             0 6px 20px 0 rgba(0, 0, 0, .19);`;
         navBottom.addEventListener('click', function () {
           let scrollHeight = Math.max(
@@ -402,23 +473,23 @@ function displayNavButton(direction, enable) {
             document.body.clientHeight, document.documentElement.clientHeight
           );
           let posCurent = window.pageYOffset;
-          if (posCurent != scrollHeight && navBottom.dataset.posBefore == -1) {
+          if (posCurent != scrollHeight && this.dataset.posBefore == -1) {
             // save & jump
-            navBottom.dataset.posBefore = posCurent;
+            this.dataset.posBefore = posCurent;
             window.scrollTo(0, scrollHeight);
-            navBottom.src =
+            this.src =
                 chrome.runtime.getURL('images/nav_back_white_48dp.png');
-            navBottom.setAttribute('title',
+            this.setAttribute('title',
                 chrome.i18n.getMessage("tip_navigate_back"));
             reachableBottomPos = window.pageYOffset;
           } else if (posCurent == reachableBottomPos &&
-              navBottom.dataset.posBefore != -1) {
+              this.dataset.posBefore != -1) {
             // jump back
-            window.scrollTo(0, navBottom.dataset.posBefore);
-            navBottom.dataset.posBefore = -1;
-            navBottom.setAttribute('title',
+            window.scrollTo(0, this.dataset.posBefore);
+            this.dataset.posBefore = -1;
+            this.setAttribute('title',
                 chrome.i18n.getMessage("checkbox_navigate_to_bottom"));
-            navBottom.src =
+            this.src =
                 chrome.runtime.getURL('images/nav_bottom_white_48dp.png');
           }
         });

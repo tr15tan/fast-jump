@@ -11,7 +11,8 @@ chrome.storage.sync.get(null, function(result) {
   console.log(result);
   // we ues for...in cz we need key for filter
   for (let key in result) {
-    if (key === 'navTop' || key === 'navBottom') continue;
+    if (key === 'pageUp' || key === 'pageDown' ||
+        key === 'navTop' || key === 'navBottom') continue;
 
     let hotkeyInfo = result[key];
     if (domainMap.has(hotkeyInfo.domain)) {
