@@ -59,6 +59,12 @@
   "button_delete": {
     "message": "delete"
   },
+  "button_export_config": {
+    "message": "export config"
+  },
+  "button_import_config": {
+    "message": "import config"
+  },
   "button_delete_all_hotkeys": {
     "message": "delete all hot keys"
   },
@@ -67,6 +73,12 @@
   },
   "alert_modify_sucess": {
     "message": "modified successfully!"
+  },
+  "alert_import_sucess": {
+    "message": "import config successfully!"
+  },
+  "alert_import_fail": {
+    "message": "import config failed!"
   },
   "confirm_delete_item": {
     "message": "Do you really want to delete this hot key?"

@@ -59,6 +59,12 @@
   "button_delete": {
     "message": "删除"
   },
+  "button_export_config": {
+    "message": "导出配置"
+  },
+  "button_import_config": {
+    "message": "导入配置"
+  },
   "button_delete_all_hotkeys": {
     "message": "删除所有快捷键"
   },
@@ -67,6 +73,12 @@
   },
   "alert_modify_sucess": {
     "message": "修改成功！"
+  },
+  "alert_import_sucess": {
+    "message": "导入配置成功！"
+  },
+  "alert_import_fail": {
+    "message": "导入配置失败！"
   },
   "confirm_delete_item": {
     "message": "确定删除该快捷键吗？"

@@ -285,6 +285,51 @@ function displayOtherOptions() {
       //});
     });
   }
+  let exportButton = otherOptions.querySelector('.export-button');
+  exportButton.onclick = function (event) {
+    chrome.storage.sync.get(null, function(result) {
+      let link = document.createElement('a');
+      link.download = 'fast-jump.options';
+      let config = [JSON.stringify(result)];
+      let blob = new Blob(config, {type: 'text/plain'});
+      link.href = URL.createObjectURL(blob);
+      link.click();
+      URL.revokeObjectURL(link.href);
+    });
+  }
+  let importButton = otherOptions.querySelector('.import-button > input');
+  importButton.onchange = function (event) {
+    let file = event.target.files[0];
+    if (file.name != "fast-jump.options") {
+      console.log("selected wrong file, ignore import.");
+      alert(chrome.i18n.getMessage("alert_import_fail"));
+      return;
+    }
+    let reader = new FileReader();
+    reader.readAsText(file);
+
+    reader.onload = function() {
+      console.log('load success!');
+      //console.log(reader.result);
+      let loadResult = JSON.parse(reader.result);
+      for (let key in loadResult) {
+        chrome.storage.sync.set({
+          [key]: loadResult[key],
+        }, function (saveResult) {
+          displayHotkeys();
+          displayOtherOptions();
+          internationalize();
+        });
+      }
+      alert(chrome.i18n.getMessage("alert_import_sucess"));
+    };
+
+    reader.onerror = function() {
+      console.log('load error...');
+      console.log(reader.error);
+      alert(chrome.i18n.getMessage("alert_import_fail"));
+    };
+  }
   let deleteAll = otherOptions.querySelector('.delete-all');
   deleteAll.onclick = function (event) {
     let result = confirm(chrome.i18n.getMessage("confirm_delete_all_hotkeys"));
@@ -292,14 +337,17 @@ function displayOtherOptions() {
       chrome.storage.sync.clear(() => {
         console.log("clear all storage successfully!");
         let container = document.querySelector('div#saved_hotkey_container');
-        console.log(container.childNodes);
+        //console.log(container.childNodes);
         while (container.firstChild) {
-          console.log(container.firstChild);
+          //console.log(container.firstChild);
           container.removeChild(container.firstChild);
-          navTop.checked = false;
-          navBottom.checked = false;
         }
-      })
+        let checkboxes = otherOptions
+            .querySelectorAll('div.checkbox > input[type="checkbox"]');
+        for (let box of checkboxes) {
+          box.checked = false;
+        }
+      });
     }
   }
 }
