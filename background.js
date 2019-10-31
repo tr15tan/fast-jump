@@ -46,7 +46,8 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
 
 chrome.storage.onChanged.addListener(function(changes, namespace) {
   for (let key in changes) {
-    if (key === 'navTop' || key === 'navBottom') continue;
+    if (key === 'pageUp' || key === 'pageDown' ||
+        key === 'navTop' || key === 'navBottom') continue;
 
     let storageChange = changes[key];
     if (storageChange.oldValue === undefined) {
