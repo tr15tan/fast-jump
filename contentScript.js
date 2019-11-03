@@ -364,7 +364,7 @@ function displayNavButton(direction, enable) {
           window.scrollBy({
             top: -(window.innerHeight - 50),  // roll back a little space
             left: 0,
-            behavior: "smooth"
+            behavior: "instant"
           });
         });
         shadowRoot.append(pageUp);
@@ -394,7 +394,7 @@ function displayNavButton(direction, enable) {
           window.scrollBy({
             top: window.innerHeight - 50,  // roll back a little space
             left: 0,
-            behavior: "smooth"
+            behavior: "instant"
           });
         });
         shadowRoot.append(pageDown);
