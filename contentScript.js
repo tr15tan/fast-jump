@@ -246,6 +246,10 @@ function createHotkeyHandler(targetElement, hotkeyInfo) {
         } else {
           event.preventDefault(); //prevent display the input key in textarea
           targetElement.focus();
+          targetElement.scrollIntoView({
+            behavior: "smooth",
+            block:    "center",
+          });
         }
         break;
       case 'click':
