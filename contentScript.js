@@ -238,10 +238,6 @@ function createHotkeyHandler(targetElement, hotkeyInfo) {
       if (event.code != hotkeySet[0]) return;
     }
 
-    if (hotkeyInfo.validWhenVisible) {
-      if (!isVisible(targetElement)) return;
-    }
-
     switch (hotkeyInfo.operation) {
       case 'focus':
         console.log("focus the element through script!");
@@ -253,6 +249,9 @@ function createHotkeyHandler(targetElement, hotkeyInfo) {
         }
         break;
       case 'click':
+        if (hotkeyInfo.validWhenVisible) {
+          if (!isVisible(targetElement)) return;
+        }
         console.log("click the element through script!");
         targetElement.click();
         break;
