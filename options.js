@@ -162,15 +162,21 @@ function createCardItem(card, hotkeyInfo) {
   let itemHotkey = cardItemDiv.querySelector('.hotkey_set');
   itemHotkey.value = hotkeyInfo.hotkeySet;
   itemHotkey.onkeydown = hotkeyInputHandler;
+  let validConditionId = hotkeyInfo.domain + "~" + hotkeyInfo.name;
   let itemValidCondition = cardItemDiv.querySelector('.valid_when_visible');
+  itemValidCondition.setAttribute('id', validConditionId);
+  let validConditionLabel = cardItemDiv.querySelector('.valid_condition_label');
+  validConditionLabel.setAttribute('for', validConditionId);
   itemValidCondition.checked = hotkeyInfo.validWhenVisible;
   if (hotkeyInfo.operation === "focus") {
+    itemValidCondition.checked = false;
     itemValidCondition.disabled = true;
   }
   let itemOperation = cardItemDiv.querySelector('.operation');
   itemOperation.value = hotkeyInfo.operation;
   itemOperation.onchange = function (event) {
     if (this.value === "focus") {
+      itemValidCondition.checked = false;
       itemValidCondition.disabled = true;
     } else {
       itemValidCondition.disabled = false;
