@@ -164,8 +164,18 @@ function createCardItem(card, hotkeyInfo) {
   itemHotkey.onkeydown = hotkeyInputHandler;
   let itemValidCondition = cardItemDiv.querySelector('.valid_when_visible');
   itemValidCondition.checked = hotkeyInfo.validWhenVisible;
+  if (hotkeyInfo.operation === "focus") {
+    itemValidCondition.disabled = true;
+  }
   let itemOperation = cardItemDiv.querySelector('.operation');
   itemOperation.value = hotkeyInfo.operation;
+  itemOperation.onchange = function (event) {
+    if (this.value === "focus") {
+      itemValidCondition.disabled = true;
+    } else {
+      itemValidCondition.disabled = false;
+    }
+  }
   let itemWarning = cardItemDiv.querySelector('.warning');
   cardItemDiv.querySelector('.save').onclick = () => {
     if (itemName.value.trim() == "") {
