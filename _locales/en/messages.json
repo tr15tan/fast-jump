@@ -14,6 +14,9 @@
   "title_options_page": {
     "message": "Fast Jump Options"
   },
+  "title_other_settings": {
+      "message": "other settings"
+  },
   "checkbox_page_up": {
     "message": "page up"
   },
@@ -32,14 +35,23 @@
   "title_add_hotkey_item": {
     "message": "add new hot key:"
   },
+  "item_name": {
+    "message": "name"
+  },
   "item_name_placeholder": {
     "message": "give this operation a name"
+  },
+  "item_hotkeyset": {
+    "message": "hot key set"
   },
   "item_hotkeyset_placeholder": {
     "message": "press keys here"
   },
   "warning_operation_name_empty": {
     "message": "the operation name can not be empty!"
+  },
+  "warning_operation_name_invalid": {
+    "message": "the operation name can not be include ' or \" !"
   },
   "warning_hotkey_empty": {
     "message": "the hot key can not be empty!"

@@ -14,6 +14,14 @@ let hotkeySet = addHotkeyItem.querySelector('.hotkey_set');
 hotkeySet.onkeydown = hotkeyInputHandler;
 let validWhenVisible = addHotkeyItem.querySelector('.valid_when_visible');
 let operation = addHotkeyItem.querySelector('.operation');
+operation.onchange = function (event) {
+  if (this.value === "focus") {
+    validWhenVisible.checked = false;
+    validWhenVisible.disabled = true;
+  } else {
+    validWhenVisible.disabled = false;
+  }
+}
 let saveButton = addHotkeyItem.querySelector('.save');
 let clearButton = addHotkeyItem.querySelector('.clear');
 let warning = addHotkeyItem.querySelector('.warning');
@@ -26,9 +34,10 @@ saveButton.onclick = () => {
     warning.textContent = chrome.i18n.getMessage("warning_operation_name_empty");
     return;
   }
-  if (operationName.value.trim().includes('\'')) {
+  if (operationName.value.trim().includes('\'') ||
+      operationName.value.trim().includes('\"')) {
     console.log("the operation name invalid, ignore save action!");
-    warning.textContent = "the operation name can not include '\''!";
+    warning.textContent = chrome.i18n.getMessage("warning_operation_name_invalid");
     return;
   }
   if (hotkeySet.value.trim() == "") {
@@ -126,7 +135,7 @@ function createCard(domainName) {
   let domainCardDiv = document.createElement('div');
   let domainCardTemplate = document.getElementById('domain_card_template');
   domainCardDiv.append(domainCardTemplate.content.cloneNode(true));
-  domainCardDiv.setAttribute('class', 'domain_card');
+  domainCardDiv.setAttribute('class', 'domain_card card my-3 shadow-sm');
   domainCardDiv.setAttribute('domain-name', domainName);
   domainCardDiv.querySelector('.domain_name').textContent = domainName;
   domainCardDiv.addEventListener('delete-hotkey-item', event => {
@@ -189,9 +198,10 @@ function createCardItem(card, hotkeyInfo) {
       itemWarning.textContent = chrome.i18n.getMessage("warning_operation_name_empty");
       return;
     }
-    if (itemName.value.trim().includes('\'')) {
+    if (itemName.value.trim().includes('\'') ||
+        itemName.value.trim().includes('\"')) {
       console.log("the operation name invalid, ignore save action!");
-      itemWarning.textContent = "the operation name can not include '\''!";
+      itemWarning.textContent = chrome.i18n.getMessage("warning_operation_name_invalid");
       return;
     }
     if (itemHotkey.value.trim() == "") {

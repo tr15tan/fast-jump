@@ -14,6 +14,9 @@
   "title_options_page": {
       "message": "快速跳转 设置"
   },
+  "title_other_settings": {
+      "message": "其他设置"
+  },
   "checkbox_page_up": {
     "message": "向上翻页"
   },
@@ -32,14 +35,23 @@
   "title_add_hotkey_item": {
     "message": "新增自定义按键："
   },
+  "item_name": {
+    "message": "名称"
+  },
   "item_name_placeholder": {
     "message": "自定义操作名称"
   },
+  "item_hotkeyset": {
+    "message": "快捷键"
+  },
   "item_hotkeyset_placeholder": {
-    "message": "在此处按键"
+    "message": "输入快捷键"
   },
   "warning_operation_name_empty": {
     "message": "操作名称不能为空！"
+  },
+  "warning_operation_name_invalid": {
+    "message": "操作名称不能包含 ' 或 \" !"
   },
   "warning_hotkey_empty": {
     "message": "按键不能为空！"

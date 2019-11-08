@@ -2,7 +2,7 @@
   "name": "__MSG_extension_name__",
   "description": "__MSG_extension_description__",
   "permissions": ["contextMenus", "activeTab", "storage", "tabs"],
-  "version": "0.5.1",
+  "version": "1.0.0",
   "manifest_version": 2,
   "background": {
     "scripts": ["background.js"],
@@ -16,14 +16,12 @@
   "browser_action": {
     "default_icon": {
       "16": "images/fastjump16.png",
-      "48": "images/fastjump48.png",
-      "128": "images/fastjump128.png"
+      "48": "images/fastjump64.png"
     }
   },
   "icons": {
     "16": "images/fastjump16.png",
-    "48": "images/fastjump48.png",
-    "128": "images/fastjump128.png"
+    "48": "images/fastjump64.png"
   },
   "web_accessible_resources": [
     "images/*.png"
