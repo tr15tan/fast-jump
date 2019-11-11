@@ -22,6 +22,7 @@ operation.onchange = function (event) {
     validWhenVisible.disabled = false;
   }
 }
+let anchorHrefLimit = addHotkeyItem.querySelector('.anchor_href_limit');
 let saveButton = addHotkeyItem.querySelector('.save');
 let clearButton = addHotkeyItem.querySelector('.clear');
 let warning = addHotkeyItem.querySelector('.warning');
@@ -53,6 +54,7 @@ saveButton.onclick = () => {
   objectInfo['hotkeySet'] = hotkeySet.value;
   objectInfo['validWhenVisible'] = validWhenVisible.checked;
   objectInfo['operation'] = operation.value;
+  objectInfo['anchorHrefLimit'] = anchorHrefLimit.checked;
   console.log(objectInfo);
   chrome.storage.sync.set({
     [objectInfo.domain + "~" + objectInfo.name]: objectInfo,
@@ -61,6 +63,7 @@ saveButton.onclick = () => {
     operationName.value = "";
     hotkeySet.value = "";
     validWhenVisible.checked = true;
+    anchorHrefLimit.checked = false;
     operation.options[0].selected = true;
     warning.hidden = true;
     displayAddedHotkey(objectInfo);
@@ -171,7 +174,8 @@ function createCardItem(card, hotkeyInfo) {
   let itemHotkey = cardItemDiv.querySelector('.hotkey_set');
   itemHotkey.value = hotkeyInfo.hotkeySet;
   itemHotkey.onkeydown = hotkeyInputHandler;
-  let validConditionId = hotkeyInfo.domain + "~" + hotkeyInfo.name;
+  let validConditionId = hotkeyInfo.domain + "~" + hotkeyInfo.name +
+      "~" + "valid_condition";
   let itemValidCondition = cardItemDiv.querySelector('.valid_when_visible');
   itemValidCondition.setAttribute('id', validConditionId);
   let validConditionLabel = cardItemDiv.querySelector('.valid_condition_label');
@@ -191,6 +195,14 @@ function createCardItem(card, hotkeyInfo) {
       itemValidCondition.disabled = false;
     }
   }
+  let anchorHrefLimitId = hotkeyInfo.domain + "~" + hotkeyInfo.name +
+      "~" + "anchor_href_limit";
+  let itemAnchorHrefLimit = cardItemDiv.querySelector('.anchor_href_limit');
+  itemAnchorHrefLimit.setAttribute('id', anchorHrefLimitId);
+  let AnchorHrefLimitLabel =
+      cardItemDiv.querySelector('.anchor_href_limit_label');
+  AnchorHrefLimitLabel.setAttribute('for', anchorHrefLimitId);
+  itemAnchorHrefLimit.checked = hotkeyInfo.anchorHrefLimit;
   let itemWarning = cardItemDiv.querySelector('.warning');
   cardItemDiv.querySelector('.save').onclick = () => {
     if (itemName.value.trim() == "") {
@@ -223,6 +235,7 @@ function createCardItem(card, hotkeyInfo) {
     hotkeyInfo['hotkeySet'] = itemHotkey.value;
     hotkeyInfo['validWhenVisible'] = itemValidCondition.checked;
     hotkeyInfo['operation'] = itemOperation.value;
+    hotkeyInfo['anchorHrefLimit'] = itemAnchorHrefLimit.checked;
     console.log(hotkeyInfo);
     chrome.storage.sync.set({
       [hotkeyInfo.domain + "~" + hotkeyInfo.name]: hotkeyInfo,

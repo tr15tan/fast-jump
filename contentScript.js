@@ -165,7 +165,8 @@ function locateElement(hotkeyInfo) {
   if (hotkeyInfo.classList != "") {
     selector += hotkeyInfo.classList;
   }
-  if (hotkeyInfo.href != "" && hotkeyInfo.href != null) {
+  if (hotkeyInfo.anchorHrefLimit === false &&
+      hotkeyInfo.href != "" && hotkeyInfo.href != null) {
     selector += "[href=\'" + hotkeyInfo.href + "\']";
   }
   if (hotkeyInfo.id != "") {

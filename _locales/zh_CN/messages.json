@@ -32,6 +32,9 @@
   "checkbox_hotkey_valid_when_visible": {
     "message": "可见时生效"
   },
+  "checkbox_do_not_use_href": {
+    "message": "不使用href"
+  },
   "title_add_hotkey_item": {
     "message": "新增自定义按键："
   },
