@@ -130,5 +130,5 @@ chrome.contextMenus.onClicked.addListener(function (info, tab) {
       chrome.runtime.sendMessage({action: "save this", object: selectedElem});
       selectedElem = undefined;
     }
-  }, 100);
+  }, 200);
 });
