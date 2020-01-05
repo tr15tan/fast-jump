@@ -7,7 +7,8 @@ document.addEventListener('contextmenu', function (event) {
   let object = event.target;
   let parentElement = object.parentElement;
 
-  // save selected element info: domain, href, localName, classList, id
+  // save selected element info: domain, href, localName, classList, id,
+  // textContent
   let current = {};
   current.domain = document.domain;
   current.href = object.getAttribute('href');
@@ -19,6 +20,7 @@ document.addEventListener('contextmenu', function (event) {
   }
   current.classList = classList;
   current.id = object.id;
+  current.textContent = object.textContent;
 
   // save parent element info: localName, classList, id
   current.parentElementLocalName = parentElement.localName;
@@ -193,10 +195,21 @@ function locateElement(hotkeyInfo) {
     for (let node of nodeList) {
       let parentElem = node.parentElement;
       if (parentElem != undefined && parentElem.matches(parentElemSelector)) {
-        console.log("found target element : ");
-        console.log(node);
-        target = node;
-        break;
+        // making sure compatible with saved objectinfo which didn't include
+        // textContent before v1.0.3
+        if (hotkeyInfo.textContent == undefined ||
+            hotkeyInfo.textContent == "") {
+          console.log("found target element : ");
+          console.log(node);
+          target = node;
+          break;
+        } else if(hotkeyInfo.textContent != undefined
+            && node.textContent == hotkeyInfo.textContent){
+          console.log("found target element : ");
+          console.log(node);
+          target = node;
+          break;
+        }
       }
     }
   }

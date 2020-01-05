@@ -2,7 +2,7 @@
   "name": "__MSG_extension_name__",
   "description": "__MSG_extension_description__",
   "permissions": ["contextMenus", "activeTab", "storage", "tabs"],
-  "version": "1.0.2",
+  "version": "1.0.3",
   "manifest_version": 2,
   "background": {
     "scripts": ["background.js"],
