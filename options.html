@@ -83,15 +83,15 @@
         </div>
       </div>
 
-      <div class="col-auto">
+      <div class="col d-flex flex-column align-items-center">
         <div id="add_hotkey_item" class="card my-3 shadow-sm border-secondary">
           <div class="add_hotkey_item_title card-header">
             <span data-i18n-content="title_add_hotkey_item">
               add new hotkey:</span>
           </div>
           <div class="card-body">
-            <div class="form-row align-items-center mb-2">
-              <div class="col-auto mr-2">
+            <div class="form-row align-items-center">
+              <div class="col-auto mr-2 my-1">
                 <div class="input-group">
                   <div class="input-group-prepend">
                     <span class="input-group-text"
@@ -103,7 +103,7 @@
                       data-i18n-placeholder="item_name_placeholder">
                 </div>
               </div>
-              <div class="col-auto mr-2">
+              <div class="col-auto mr-2 my-1">
                 <div class="input-group">
                   <div class="input-group-prepend">
                     <span data-i18n-content="item_hotkeyset"
@@ -119,7 +119,7 @@
                   </div>
                 </div>
               </div>
-              <div class="col-auto mr-2">
+              <div class="col-auto mr-2 my-1">
                 <select class="operation custom-select">
                   <option data-i18n-content="option_hotkeyset_operation_click"
                       value="click">
@@ -131,7 +131,7 @@
                   </option>
                 </select>
               </div>
-              <div class="col-auto mr-2">
+              <div class="col-auto mr-2 my-1">
                 <div class="custom-control custom-checkbox">
                   <input type="checkbox" name="add_valid_condition"
                       id="add_valid_condition" checked
@@ -143,7 +143,7 @@
                   </label>
                 </div>
               </div>
-              <div class="col-auto mr-2">
+              <div class="col-auto mr-2 my-1">
                 <div class="custom-control custom-checkbox">
                   <input type="checkbox" name="anchor_href_limit"
                       id="add_anchor_href_limit"
@@ -155,7 +155,7 @@
                   </label>
                 </div>
               </div>
-              <div class="mr-2">
+              <div class="col-auto mr-2 my-1">
                 <button class="save btn btn-outline-secondary"
                     data-i18n-content="button_save">save</button>
               </div>
@@ -164,7 +164,19 @@
           </div>
         </div>
 
-        <div id="saved_hotkey_container" class="mx-auto"></div>
+        <div id="saved_hotkey_container"></div>
+
+        <!-- Note: Changing the value of the CSS display property on an element
+             with the hidden attribute overrides the behavior. For instance,
+             elements styled display: flex will be displayed despite the hidden
+             attribute's presence. -->
+        <div id="empty_view">
+          <figure class="flex-grow-1 d-flex flex-column
+              align-items-center justify-content-center">
+            <img src="images/empty-view-80dp.png"></i>
+            <figcaption data-i18n-content="hint_empty_view"></figcaption>
+          </figure>
+        </div>
 
         <template id="domain_card_template">
           <div class="domain_card_title card-header">
@@ -176,8 +188,8 @@
         </template>
 
         <template id="domain_card_item_template">
-          <div class="form-row align-items-center mb-2">
-            <div class="col-auto mr-2">
+          <div class="form-row align-items-center">
+            <div class="col-auto mr-2 my-1">
               <div class="input-group">
                 <div class="input-group-prepend">
                   <span class="input-group-text"
@@ -189,7 +201,7 @@
                     data-i18n-placeholder="item_name_placeholder">
               </div>
             </div>
-            <div class="col-auto mr-2">
+            <div class="col-auto mr-2 my-1">
               <div class="input-group">
                 <div class="input-group-prepend">
                   <span data-i18n-content="item_hotkeyset"
@@ -205,7 +217,7 @@
                 </div>
               </div>
             </div>
-            <div class="col-auto mr-2">
+            <div class="col-auto mr-2 my-1">
               <select class="operation custom-select">
                 <option data-i18n-content="option_hotkeyset_operation_click"
                     value="click">
@@ -217,7 +229,7 @@
                 </option>
               </select>
             </div>
-            <div class="col-auto mr-2">
+            <div class="col-auto mr-2 my-1">
               <div class="custom-control custom-checkbox">
                 <input type="checkbox" name="valid_condition"
                     class="valid_when_visible custom-control-input">
@@ -228,7 +240,7 @@
                 </label>
               </div>
             </div>
-            <div class="col-auto mr-2">
+            <div class="col-auto mr-2 my-1">
               <div class="custom-control custom-checkbox">
                 <input type="checkbox" name="anchor_href_limit"
                     class="anchor_href_limit custom-control-input">
@@ -238,11 +250,11 @@
                 </label>
               </div>
             </div>
-            <div class="mr-2">
+            <div class="col-auto mr-2 my-1">
               <button class="save btn btn-outline-secondary"
                   data-i18n-content="button_save">save</button>
             </div>
-            <div class="mr-2">
+            <div class="col-auto mr-2 my-1">
               <button class="delete btn btn-outline-secondary"
                   data-i18n-content="button_delete">delete</button>
             </div>

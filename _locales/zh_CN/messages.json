@@ -17,6 +17,9 @@
   "title_other_settings": {
       "message": "其他设置"
   },
+  "hint_empty_view": {
+    "message": "没有已保存的快捷键"
+  },
   "checkbox_page_up": {
     "message": "向上翻页"
   },

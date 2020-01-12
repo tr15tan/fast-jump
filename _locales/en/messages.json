@@ -17,6 +17,9 @@
   "title_other_settings": {
       "message": "other settings"
   },
+  "hint_empty_view": {
+    "message": "there are no saved hot keys"
+  },
   "checkbox_page_up": {
     "message": "page up"
   },

@@ -116,8 +116,14 @@ let background = chrome.extension.getBackgroundPage();
 console.log(background.domainMap);
 
 let savedHotkeyContainer = document.getElementById('saved_hotkey_container');
+let emptyView = document.getElementById('empty_view');
 
 function displayHotkeys() {
+  if (background.domainMap.size == 0) {
+    emptyView.hidden = false;
+  } else {
+    emptyView.hidden = true;
+  }
   background.domainMap.forEach((value, key, map) => {
     let createdCard = createCard(key);
     createCardItems(createdCard, value);
