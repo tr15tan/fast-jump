@@ -439,18 +439,19 @@ function displayNavButton(direction, enable) {
             order: 3; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, .2),
             0 6px 20px 0 rgba(0, 0, 0, .19);`;
         navTop.addEventListener('click', function () {
-          let posCurent = window.pageYOffset;
-          if (posCurent != 0 && this.dataset.posBefore == -1) {
+          let posCurentY = window.pageYOffset;
+          let posCurentX = window.pageXOffset;
+          if (posCurentY != 0 && this.dataset.posBefore == -1) {
             // save & jump
-            this.dataset.posBefore = posCurent;
-            window.scrollTo(0, 0);
+            this.dataset.posBefore = posCurentY;
+            window.scrollTo(posCurentX, 0);
             this.src =
                 chrome.runtime.getURL('images/nav_back_white_48dp.png');
             this.setAttribute('title',
                 chrome.i18n.getMessage("tip_navigate_back"));
-          } else if (posCurent == 0 && this.dataset.posBefore != -1) {
+          } else if (posCurentY == 0 && this.dataset.posBefore != -1) {
             // jump back
-            window.scrollTo(0, this.dataset.posBefore);
+            window.scrollTo(posCurentX, this.dataset.posBefore);
             this.dataset.posBefore = -1;
             this.setAttribute('title',
                 chrome.i18n.getMessage("checkbox_navigate_to_top"));
@@ -489,20 +490,22 @@ function displayNavButton(direction, enable) {
             document.body.offsetHeight, document.documentElement.offsetHeight,
             document.body.clientHeight, document.documentElement.clientHeight
           );
-          let posCurent = window.pageYOffset;
-          if (posCurent != scrollHeight && this.dataset.posBefore == -1) {
+          let posCurentY = window.pageYOffset;
+          let posCurentX = window.pageXOffset;
+          if (posCurentY != scrollHeight && this.dataset.posBefore == -1) {
             // save & jump
-            this.dataset.posBefore = posCurent;
-            window.scrollTo(0, scrollHeight);
+            this.dataset.posBefore = posCurentY;
+            window.scrollTo(posCurentX, scrollHeight);
             this.src =
                 chrome.runtime.getURL('images/nav_back_white_48dp.png');
             this.setAttribute('title',
                 chrome.i18n.getMessage("tip_navigate_back"));
             reachableBottomPos = window.pageYOffset;
-          } else if (posCurent == reachableBottomPos &&
+          } else if (posCurentY == reachableBottomPos &&
               this.dataset.posBefore != -1) {
             // jump back
-            window.scrollTo(0, this.dataset.posBefore);
+          let posCurentX = window.pageXOffset;
+            window.scrollTo(posCurentX, this.dataset.posBefore);
             this.dataset.posBefore = -1;
             this.setAttribute('title',
                 chrome.i18n.getMessage("checkbox_navigate_to_bottom"));
