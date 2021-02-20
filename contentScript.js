@@ -6,9 +6,11 @@ document.addEventListener('contextmenu', function (event) {
 
   let object = event.target;
   let parentElement = object.parentElement;
+  // console.log("selected object : ");
+  // console.log(object);
 
   // save selected element info: domain, href, localName, classList, id,
-  // textContent
+  // textContent, title
   let current = {};
   current.domain = document.domain;
   current.href = object.getAttribute('href');
@@ -21,8 +23,9 @@ document.addEventListener('contextmenu', function (event) {
   current.classList = classList;
   current.id = object.id;
   current.textContent = object.textContent;
+  current.title = object.getAttribute('title');
 
-  // save parent element info: localName, classList, id
+  // save parent element info: localName, classList, id, textContent
   current.parentElementLocalName = parentElement.localName;
   let parentElementClassList = "";
   for (let parentElementClassName of parentElement.classList) {
@@ -30,6 +33,7 @@ document.addEventListener('contextmenu', function (event) {
   }
   current.parentElementClassList = parentElementClassList;
   current.parentElementId = parentElement.id;
+  current.parentElementTextContent = parentElement.textContent;
 
   chrome.runtime.sendMessage({action: "ready to save", object: current});
 
@@ -174,7 +178,10 @@ function locateElement(hotkeyInfo) {
   if (hotkeyInfo.id != "") {
     selector += "#" + hotkeyInfo.id;
   }
-  //console.log("selector = " + selector);
+  if (hotkeyInfo.title != "") {
+    selector += "[title=\'" + hotkeyInfo.title + "\']";
+  }
+  // console.log("selector = " + selector);
 
   // css-selector of target parent element
   let parentElemSelector = "";
@@ -187,7 +194,10 @@ function locateElement(hotkeyInfo) {
   if (hotkeyInfo.parentElementId != "") {
     parentElemSelector += "#" + hotkeyInfo.parentElementId;
   }
-  //console.log("parentElemSelector = " + parentElemSelector);
+  // console.log("parentElemSelector = " + parentElemSelector);
+
+  // console.log("textContent = " + hotkeyInfo.textContent);
+  // console.log("parentElementTextContent = " + hotkeyInfo.parentElementTextContent);
 
   // check whether the found element is our wanted
   let nodeList = document.querySelectorAll(selector);
@@ -195,7 +205,7 @@ function locateElement(hotkeyInfo) {
     for (let node of nodeList) {
       let parentElem = node.parentElement;
       if (parentElem != undefined && parentElem.matches(parentElemSelector)) {
-        // making sure compatible with saved objectinfo which didn't include
+        // make sure compatible with saved objectinfo which didn't include
         // textContent before v1.0.3
         if (hotkeyInfo.textContent == undefined ||
             hotkeyInfo.textContent == "") {
@@ -205,10 +215,22 @@ function locateElement(hotkeyInfo) {
           break;
         } else if(hotkeyInfo.textContent != undefined
             && node.textContent == hotkeyInfo.textContent){
-          console.log("found target element : ");
-          console.log(node);
-          target = node;
-          break;
+          // make sure compatible with saved objectinfo which didn't include
+          // parentElementTextContent before v1.0.6
+          if (hotkeyInfo.parentElementTextContent == undefined ||
+              hotkeyInfo.parentElementTextContent == "") {
+            console.log("found target element : ");
+            console.log(node);
+            target = node;
+            break;
+          } else if (hotkeyInfo.parentElementTextContent != undefined
+              && node.parentElement.textContent ==
+            hotkeyInfo.parentElementTextContent) {
+            console.log("found target element : ");
+            console.log(node);
+            target = node;
+            break;
+          }
         }
       }
     }
