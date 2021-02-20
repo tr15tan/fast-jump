@@ -178,7 +178,7 @@ function locateElement(hotkeyInfo) {
   if (hotkeyInfo.id != "") {
     selector += "#" + hotkeyInfo.id;
   }
-  if (hotkeyInfo.title != "") {
+  if (hotkeyInfo.title != "" && hotkeyInfo.title != null) {
     selector += "[title=\'" + hotkeyInfo.title + "\']";
   }
   // console.log("selector = " + selector);
