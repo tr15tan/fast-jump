@@ -575,33 +575,6 @@ function displayNavButton(direction, enable) {
         }
       }
       break;
-    case 'close' :
-      let pageClose;
-      if (enable) {
-        pageClose = document.createElement("img");
-        pageClose.setAttribute('class', 'navButton');
-        pageClose.setAttribute('direction', 'close');
-        pageClose.setAttribute('alt', 'page close');
-        pageClose.setAttribute('title',
-            chrome.i18n.getMessage("checkbox_page_close"));
-            pageClose.src = chrome.runtime.getURL('images/page_close_white_48dp.png');
-            pageClose.style =
-            `background: rgba(0, 0, 0, 0.26); cursor: pointer; border: none;
-            border-radius: 5px; width: 80px; display: block; margin: 10px;
-            order: 3; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, .2),
-            0 6px 20px 0 rgba(0, 0, 0, .19);`;
-            pageClose.addEventListener('click', function () {
-          // 88.0.4324.182 not working
-          window.close();
-        });
-        shadowRoot.append(pageClose);
-      } else {
-        pageClose = shadowRoot.querySelector('.navButton[direction="close"]');
-        if (pageClose != null) {
-          pageClose.remove();
-        }
-      }
-      break;
     default:
       break;
   }
