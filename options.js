@@ -294,6 +294,10 @@ function displayOtherOptions() {
   chrome.storage.sync.get(['navBottom'], function (result) {
     navBottom.checked = result.navBottom;
   });
+  let pageClose = otherOptions.querySelector('.page_close');
+  chrome.storage.sync.get(['pageClose'], function (result) {
+    pageClose.checked = result.pageClose;
+  });
   pageUp.onclick = function (event) {
     let checked = this.checked;
     chrome.storage.sync.set({
@@ -328,6 +332,14 @@ function displayOtherOptions() {
       //chrome.storage.sync.get(['navBottom'], function (result) {
       //  console.log("set navBottom = " + result.navBottom);
       //});
+    });
+  }
+  pageClose.onclick = function (event) {
+    let checked = this.checked;
+    chrome.storage.sync.set({
+      pageClose: checked
+    }, function (result) {
+
     });
   }
   let exportButton = otherOptions.querySelector('.export-button');

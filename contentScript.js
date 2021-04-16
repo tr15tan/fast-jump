@@ -62,6 +62,9 @@ chrome.storage.onChanged.addListener(function(changes, namespace) {
     } else if (key === 'navBottom') {
       displayNavButton('bottom', storageChange.newValue);
       continue;
+    } else if (key === 'pageClose') {
+      displayNavButton('close', storageChange.newValue);
+      continue;
     }
     if (storageChange.oldValue != undefined) {
       console.log("oldValue = ");
@@ -367,6 +370,9 @@ function displayNavigationButton() {
   chrome.storage.sync.get(['navBottom'], function (result) {
     displayNavButton('bottom', result.navBottom);
   });
+  chrome.storage.sync.get(['pageClose'], function (result) {
+    displayNavButton('close', result.pageClose);
+  });
 }
 
 function displayNavButton(direction, enable) {
@@ -396,7 +402,7 @@ function displayNavButton(direction, enable) {
         pageUp.src = chrome.runtime.getURL('images/page_up_white_48dp.png');
         pageUp.style =
             `background: rgba(0, 0, 0, 0.26); cursor: pointer; border: none;
-            border-radius: 5px; width: 90px; display: block; margin: 10px;
+            border-radius: 5px; width: 80px; display: block; margin: 10px;
             order: 1; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, .2),
             0 6px 20px 0 rgba(0, 0, 0, .19);`;
         pageUp.addEventListener('click', function () {
@@ -426,7 +432,7 @@ function displayNavButton(direction, enable) {
         pageDown.src = chrome.runtime.getURL('images/page_down_white_48dp.png');
         pageDown.style =
             `background: rgba(0, 0, 0, 0.26); cursor: pointer; border: none;
-            border-radius: 5px; width: 90px; display: block; margin: 10px;
+            border-radius: 5px; width: 80px; display: block; margin: 10px;
             order: 2; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, .2),
             0 6px 20px 0 rgba(0, 0, 0, .19);`;
         pageDown.addEventListener('click', function () {
@@ -457,8 +463,8 @@ function displayNavButton(direction, enable) {
         navTop.src = chrome.runtime.getURL('images/nav_top_white_48dp.png');
         navTop.style =
             `background: rgba(0, 0, 0, 0.26); cursor: pointer; border: none;
-            border-radius: 5px; width: 90px; display: block; margin: 10px;
-            order: 3; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, .2),
+            border-radius: 5px; width: 80px; display: block; margin: 10px;
+            order: 4; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, .2),
             0 6px 20px 0 rgba(0, 0, 0, .19);`;
         navTop.addEventListener('click', function () {
           let posCurentY = window.pageYOffset;
@@ -503,8 +509,8 @@ function displayNavButton(direction, enable) {
             chrome.runtime.getURL('images/nav_bottom_white_48dp.png');
         navBottom.style =
             `background: rgba(0, 0, 0, 0.26); cursor: pointer; border: none;
-            border-radius: 5px; width: 90px; display: block; margin: 10px;
-            order: 4; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, .2),
+            border-radius: 5px; width: 80px; display: block; margin: 10px;
+            order: 5; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, .2),
             0 6px 20px 0 rgba(0, 0, 0, .19);`;
         navBottom.addEventListener('click', function () {
           let scrollHeight = Math.max(
@@ -540,6 +546,33 @@ function displayNavButton(direction, enable) {
         navBottom = shadowRoot.querySelector('.navButton[direction="bottom"]');
         if (navBottom != null) {
           navBottom.remove();
+        }
+      }
+      break;
+    case 'close' :
+      let pageClose;
+      if (enable) {
+        pageClose = document.createElement("img");
+        pageClose.setAttribute('class', 'navButton');
+        pageClose.setAttribute('direction', 'close');
+        pageClose.setAttribute('alt', 'page close');
+        pageClose.setAttribute('title',
+            chrome.i18n.getMessage("checkbox_page_close"));
+            pageClose.src = chrome.runtime.getURL('images/page_close_white_48dp.png');
+            pageClose.style =
+            `background: rgba(0, 0, 0, 0.26); cursor: pointer; border: none;
+            border-radius: 5px; width: 80px; display: block; margin: 10px;
+            order: 3; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, .2),
+            0 6px 20px 0 rgba(0, 0, 0, .19);`;
+            pageClose.addEventListener('click', function () {
+          // 88.0.4324.182 not working
+          window.close();
+        });
+        shadowRoot.append(pageClose);
+      } else {
+        pageClose = shadowRoot.querySelector('.navButton[direction="close"]');
+        if (pageClose != null) {
+          pageClose.remove();
         }
       }
       break;

@@ -11,7 +11,7 @@ chrome.storage.sync.get(null, function(result) {
   console.log(result);
   // we ues for...in cz we need key for filter
   for (let key in result) {
-    if (key === 'pageUp' || key === 'pageDown' ||
+    if (key === 'pageUp' || key === 'pageDown' || key === 'pageClose' ||
         key === 'navTop' || key === 'navBottom') continue;
 
     let hotkeyInfo = result[key];
@@ -46,7 +46,7 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
 
 chrome.storage.onChanged.addListener(function(changes, namespace) {
   for (let key in changes) {
-    if (key === 'pageUp' || key === 'pageDown' ||
+    if (key === 'pageUp' || key === 'pageDown' || key === 'pageClose' ||
         key === 'navTop' || key === 'navBottom') continue;
 
     let storageChange = changes[key];

@@ -32,6 +32,9 @@
   "checkbox_navigate_to_bottom": {
     "message": "去到底部"
   },
+  "checkbox_page_close": {
+    "message": "关闭页面"
+  },
   "checkbox_hotkey_valid_when_visible": {
     "message": "可见时生效"
   },

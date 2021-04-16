@@ -32,6 +32,9 @@
   "checkbox_navigate_to_bottom": {
     "message": "navigate to bottom"
   },
+  "checkbox_page_close": {
+    "message": "page close"
+  },
   "checkbox_hotkey_valid_when_visible": {
     "message": "valid when visible"
   },
