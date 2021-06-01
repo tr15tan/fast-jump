@@ -436,6 +436,38 @@ function displayNavButton(direction, enable) {
             order: 2; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, .2),
             0 6px 20px 0 rgba(0, 0, 0, .19);`;
         pageDown.addEventListener('click', function () {
+          // let pageMark;
+          // chrome.storage.sync.get(['pageMark'], function (result) {
+            // pageMark = result.pageMark;
+          // });
+          // let pageMarkAutoRemove;
+          // chrome.storage.sync.get(['pageMarkAutoRemove'], function (result) {
+            // pageMarkAutoRemove = result.pageMarkAutoRemove;
+          // });
+          // if (pageMark) {
+            let lineMark = document.body.querySelector('div.lineMark');
+            if (lineMark != null) {
+              lineMark.remove();
+            }
+            let bottomOffSet = window.pageYOffset + window.innerHeight;
+            lineMark = document.createElement("div");
+            lineMark.setAttribute('class', 'lineMark');
+            lineMark.style =
+                `position: absolute; width: 100%; height: 14px;
+                background: #4cd137; box-sizing: border-box;
+                padding-top:14px; padding-left: 4px;`;
+            // padding-top and padding-left is for textContent
+            lineMark.style.top = bottomOffSet - 14 + "px";
+            lineMark.textContent = 'last page bottom';
+            document.body.append(lineMark);
+            // if (pageMarkAutoRemove) {
+              setTimeout(() => {
+                if (lineMark != null) {
+                  lineMark.remove();
+                }
+              }, 1200);
+            // }
+          // }
           window.scrollBy({
             top: window.innerHeight - 50,  // roll back a little space
             left: 0,
