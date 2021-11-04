@@ -48,7 +48,7 @@
     "message": "valid when visible"
   },
   "checkbox_do_not_use_href": {
-    "message": "don't use href"
+    "message": "don't use hypertext reference"
   },
   "title_add_hotkey_item": {
     "message": "add new hot key:"
