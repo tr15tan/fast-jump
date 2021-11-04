@@ -298,11 +298,24 @@ function displayOtherOptions() {
   chrome.storage.sync.get(['pageClose'], function (result) {
     pageClose.checked = result.pageClose;
   });
+  let pageMark = otherOptions.querySelector('.page_mark');
+  chrome.storage.sync.get(['pageMark'], function (result) {
+    pageMark.checked = result.pageMark;
+    if (result.pageMark) {
+      pageMarkAutoRemove.disabled = false;
+    } else {
+      pageMarkAutoRemove.disabled = true;
+    }
+  });
+  let pageMarkAutoRemove = otherOptions.querySelector('.page_mark_auto_remove');
+  chrome.storage.sync.get(['pageMarkAutoRemove'], function (result) {
+    pageMarkAutoRemove.checked = result.pageMarkAutoRemove;
+  });
   pageUp.onclick = function (event) {
     let checked = this.checked;
     chrome.storage.sync.set({
       pageUp: checked
-    }, function (result) {
+    }, function () {
 
     });
   }
@@ -310,7 +323,7 @@ function displayOtherOptions() {
     let checked = this.checked;
     chrome.storage.sync.set({
       pageDown: checked
-    }, function (result) {
+    }, function () {
 
     });
   }
@@ -339,6 +352,26 @@ function displayOtherOptions() {
     chrome.storage.sync.set({
       pageClose: checked
     }, function (result) {
+
+    });
+  }
+  pageMark.onclick = function (event) {
+    let checked = this.checked;
+    chrome.storage.sync.set({
+      pageMark: checked
+    }, function () {
+      if (checked) {
+        pageMarkAutoRemove.disabled = false;
+      } else {
+        pageMarkAutoRemove.disabled = true;
+      }
+    });
+  }
+  pageMarkAutoRemove.onclick = function (event) {
+    let checked = this.checked;
+    chrome.storage.sync.set({
+      pageMarkAutoRemove: checked
+    }, function () {
 
     });
   }

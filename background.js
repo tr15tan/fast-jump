@@ -6,13 +6,17 @@
 // variable with `let`
 var domainMap = new Map();
 
+// init domainMap
 chrome.storage.sync.get(null, function(result) {
   console.log('get all hotkey info :');
   console.log(result);
   // we ues for...in cz we need key for filter
   for (let key in result) {
+    // we don't need these keys because they are for global settings but not for
+    // specific domains
     if (key === 'pageUp' || key === 'pageDown' || key === 'pageClose' ||
-        key === 'navTop' || key === 'navBottom') continue;
+        key === 'navTop' || key === 'navBottom' || key === 'pageMark' ||
+        key === 'pageMarkAutoRemove') continue;
 
     let hotkeyInfo = result[key];
     if (domainMap.has(hotkeyInfo.domain)) {
@@ -44,10 +48,14 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
   }
 });
 
+// update domainMap
 chrome.storage.onChanged.addListener(function(changes, namespace) {
   for (let key in changes) {
+    // we don't need these keys because they are for global settings but not for
+    // specific domains
     if (key === 'pageUp' || key === 'pageDown' || key === 'pageClose' ||
-        key === 'navTop' || key === 'navBottom') continue;
+        key === 'navTop' || key === 'navBottom' || key === 'pageMark' ||
+        key === 'pageMarkAutoRemove') continue;
 
     let storageChange = changes[key];
     if (storageChange.oldValue === undefined) {

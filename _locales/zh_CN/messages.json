@@ -11,6 +11,9 @@
   "tip_navigate_back": {
       "message": "回到原处"
   },
+  "tip_last_page_bottom": {
+      "message": "上页底部"
+  },
   "title_options_page": {
       "message": "快速跳转 设置"
   },
@@ -34,6 +37,12 @@
   },
   "checkbox_page_close": {
     "message": "关闭页面"
+  },
+  "checkbox_page_mark": {
+    "message": "显示翻页标记"
+  },
+  "checkbox_page_mark_auto_remove": {
+    "message": "自动移除翻页标记"
   },
   "checkbox_hotkey_valid_when_visible": {
     "message": "可见时生效"

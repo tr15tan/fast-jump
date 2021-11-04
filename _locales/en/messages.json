@@ -11,6 +11,9 @@
   "tip_navigate_back": {
       "message": "navigate back"
   },
+  "tip_last_page_bottom": {
+      "message": "last page bottom"
+  },
   "title_options_page": {
     "message": "Fast Jump Options"
   },
@@ -34,6 +37,12 @@
   },
   "checkbox_page_close": {
     "message": "page close"
+  },
+  "checkbox_page_mark": {
+    "message": "display page turning mark"
+  },
+  "checkbox_page_mark_auto_remove": {
+    "message": "auto remove page turning mark"
   },
   "checkbox_hotkey_valid_when_visible": {
     "message": "valid when visible"

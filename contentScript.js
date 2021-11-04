@@ -1,5 +1,8 @@
 console.log("loaded contentscript");
 
+let pageMark;
+let pageMarkAutoRemove;
+
 document.addEventListener('contextmenu', function (event) {
   console.log("=====================================================");
   console.log("detected contextmenu event");
@@ -64,6 +67,19 @@ chrome.storage.onChanged.addListener(function(changes, namespace) {
       continue;
     } else if (key === 'pageClose') {
       displayNavButton('close', storageChange.newValue);
+      continue;
+    } else if (key === 'pageMark') {
+      pageMark = storageChange.newValue;
+      // remove lineMark if there is a previously existing one
+      if (!pageMark) {
+        let lineMark = document.body.querySelector('div.lineMark');
+        if (lineMark != null) {
+          lineMark.remove();
+        }
+      }
+      continue;
+    } else if (key === 'pageMarkAutoRemove') {
+      pageMarkAutoRemove = storageChange.newValue;
       continue;
     }
     if (storageChange.oldValue != undefined) {
@@ -373,6 +389,14 @@ function displayNavigationButton() {
   chrome.storage.sync.get(['pageClose'], function (result) {
     displayNavButton('close', result.pageClose);
   });
+  // these two values is not for display NavButtons, but they will be used with
+  // the corresponding NavButtons, thus we sync them here
+  chrome.storage.sync.get(['pageMark'], function (result) {
+    pageMark = result.pageMark;
+  });
+  chrome.storage.sync.get(['pageMarkAutoRemove'], function (result) {
+    pageMarkAutoRemove = result.pageMarkAutoRemove;
+  });
 }
 
 function displayNavButton(direction, enable) {
@@ -436,15 +460,7 @@ function displayNavButton(direction, enable) {
             order: 2; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, .2),
             0 6px 20px 0 rgba(0, 0, 0, .19);`;
         pageDown.addEventListener('click', function () {
-          // let pageMark;
-          // chrome.storage.sync.get(['pageMark'], function (result) {
-            // pageMark = result.pageMark;
-          // });
-          // let pageMarkAutoRemove;
-          // chrome.storage.sync.get(['pageMarkAutoRemove'], function (result) {
-            // pageMarkAutoRemove = result.pageMarkAutoRemove;
-          // });
-          // if (pageMark) {
+          if (pageMark) {
             let lineMark = document.body.querySelector('div.lineMark');
             if (lineMark != null) {
               lineMark.remove();
@@ -458,16 +474,17 @@ function displayNavButton(direction, enable) {
                 padding-top:14px; padding-left: 4px;`;
             // padding-top and padding-left is for textContent
             lineMark.style.top = bottomOffSet - 14 + "px";
-            lineMark.textContent = 'last page bottom';
+            lineMark.textContent =
+                chrome.i18n.getMessage("tip_last_page_bottom");
             document.body.append(lineMark);
-            // if (pageMarkAutoRemove) {
+            if (pageMarkAutoRemove) {
               setTimeout(() => {
                 if (lineMark != null) {
                   lineMark.remove();
                 }
               }, 1200);
-            // }
-          // }
+            }
+          }
           window.scrollBy({
             top: window.innerHeight - 50,  // roll back a little space
             left: 0,
