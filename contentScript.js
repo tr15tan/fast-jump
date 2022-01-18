@@ -406,6 +406,23 @@ function displayNavButton(direction, enable) {
     shadowDiv.setAttribute('class', 'navBtnContainer');
     shadowDiv.style = `display:flex;flex-direction:column;position:fixed;
         bottom:10%;right:8%;z-index:999`;
+
+    document.addEventListener("fullscreenchange", function( event ) {
+      // The event object doesn't carry information about the fullscreen state of the browser,
+      // but it is possible to retrieve it through the fullscreen API
+      if ( document.fullscreenElement !== null ) {
+        // The target of the event is always the document,
+        // but it is possible to retrieve the fullscreen element through the API
+        // document.fullscreenElement. If it's not null, then it's an Element
+        // currently being displayed in full-screen mode.
+        console.log("enter fullscreen mode!");
+        shadowDiv.style.visibility = "hidden";
+      } else {
+        console.log("exit fullscreen mode!");
+        shadowDiv.style.visibility = "visible";
+      }
+    });
+
     document.body.append(shadowDiv);
   }
   let shadowRoot = shadowDiv.shadowRoot;
